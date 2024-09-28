@@ -1,4 +1,5 @@
 ---
+import { wholeNumberRange } from "../../utils/number";
 import BarGroup from "./BarGroup.astro";
 
 interface Props {
@@ -7,37 +8,65 @@ interface Props {
 
 const { data } = Astro.props;
 
-const maxValue = Math.max(
+let maxValueBeforeCorrection = Math.max(
   ...data.map((dataPoints) =>
     Math.max(...dataPoints.bars.map((bar) => bar.value))
   )
 );
+
+const MAX_VALUE_DIVISABILITY_THRESHOLD = 5;
+
+// Correction to make sure we at least have a somewhat pretty number of guidelines
+while (maxValueBeforeCorrection % MAX_VALUE_DIVISABILITY_THRESHOLD)
+  maxValueBeforeCorrection++;
+const maxValue = maxValueBeforeCorrection;
+
+const Y_AXIS_GUIDELINES_TARGET = 10;
 ---
 
 <div
-  class="flex flex-row justify-around gap-12 h-full w-full bg-white aspect-video text-black p-5 py-10"
+  class="flex flex-row justify-around gap-1 h-full w-full bg-white aspect-video text-black p-5 py-10"
 >
-  <div class="flex flex-row justify-around gap-6 h-full w-full border-l-2 border-b-2 border-black bg-white aspect-video text-black px-5">
-
-  {
-    data.map(({ label, bars }) => {
-      return (
-        <div class="relative h-full w-full flex flex-col justify-end items-center">
-          <div
-            class="w-full"
-            style={
-              "height: " +
-              (Math.max(...bars.map((bar) => bar.value)) / maxValue) * 100 +
-              "%;"
-            }
-          >
-            <BarGroup bars={bars} />
+  <div
+    class="relative flex flex-row justify-around gap-6 h-full w-full border-l-2 border-b-2 border-black bg-white aspect-video text-black px-5 ml-5"
+  >
+    <div
+      class="absolute flex flex-col justify-between h-[106%] self-center -left-6"
+    >
+      {
+        wholeNumberRange(maxValue, Y_AXIS_GUIDELINES_TARGET)
+          .reverse()
+          .map((num) => {
+            return <p class="text-sm font-bold text-end">{num}</p>;
+          })
+      }
+    </div>
+    <!-- Horizontal lines -->
+    <div class="absolute h-full w-full flex flex-col justify-between">
+      {
+        wholeNumberRange(maxValue, Y_AXIS_GUIDELINES_TARGET).map((num) => {
+          return <div class="bg-slate-300 w-full h-px" />;
+        })
+      }
+    </div>
+    {
+      data.map(({ label, bars }) => {
+        return (
+          <div class="relative h-full w-full flex flex-col justify-end items-center">
+            <div
+              class="w-full"
+              style={
+                "height: " +
+                (Math.max(...bars.map((bar) => bar.value)) / maxValue) * 100 +
+                "%;"
+              }
+            >
+              <BarGroup bars={bars} />
+            </div>
+            <p class="absolute -bottom-8">{label}</p>
           </div>
-          <p class="absolute -bottom-8">{label}</p>
-        </div>
-      );
-    })
-  }
+        );
+      })
+    }
   </div>
-
 </div>
