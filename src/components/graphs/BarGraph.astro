@@ -1,0 +1,43 @@
+---
+import BarGroup from "./BarGroup.astro";
+
+interface Props {
+  data: { label?: string; bars: { value: number; color?: string }[] }[];
+}
+
+const { data } = Astro.props;
+
+const maxValue = Math.max(
+  ...data.map((dataPoints) =>
+    Math.max(...dataPoints.bars.map((bar) => bar.value))
+  )
+);
+---
+
+<div
+  class="flex flex-row justify-around gap-12 h-full w-full bg-white aspect-video text-black p-5 py-10"
+>
+  <div class="flex flex-row justify-around gap-6 h-full w-full border-l-2 border-b-2 border-black bg-white aspect-video text-black px-5">
+
+  {
+    data.map(({ label, bars }) => {
+      return (
+        <div class="relative h-full w-full flex flex-col justify-end items-center">
+          <div
+            class="w-full"
+            style={
+              "height: " +
+              (Math.max(...bars.map((bar) => bar.value)) / maxValue) * 100 +
+              "%;"
+            }
+          >
+            <BarGroup bars={bars} />
+          </div>
+          <p class="absolute -bottom-8">{label}</p>
+        </div>
+      );
+    })
+  }
+  </div>
+
+</div>
