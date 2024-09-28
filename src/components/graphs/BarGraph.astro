@@ -1,9 +1,10 @@
 ---
 import { wholeNumberRange } from "../../utils/number";
+import type { BarGraphData } from "../../types";
 import BarGroup from "./BarGroup.astro";
 
 interface Props {
-  data: { label?: string; bars: { value: number; color?: string }[] }[];
+  data: BarGraphData
 }
 
 const { data } = Astro.props;

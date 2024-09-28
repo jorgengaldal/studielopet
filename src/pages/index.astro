@@ -4,8 +4,10 @@ import Card from "../components/Card.astro";
 import Track from "../components/Track.astro";
 import Run from "../components/Run.astro";
 import BarGraph from "../components/graphs/BarGraph.astro";
+import type { BarGraphData } from "../types";
 
-const testData = [
+const testData: BarGraphData
+ = [
   { label: "A", bars: [{ value: 15, color: "#0d5474" }, { value: 12 }] },
   { label: "B", bars: [{ value: 23, color: "#0d5474"  }, { value: 12 }] },
   { label: "C", bars: [{ value: 9, color: "#0d5474"  }, { value: 8 }] },
