@@ -1,5 +1,4 @@
-import type { BarGraphData, GradeEntry } from "../types";
-import { allEquals } from "./object";
+import type { GradeEntry } from "../types";
 import { getColorByStudyProgrammeCode } from "./utils";
 
 const API_BASE =
@@ -115,10 +114,6 @@ export const getGradeEntries = async (): Promise<GradeEntry[]> => {
 
   return gradeEntries;
 };
-
-/* 
-Wanted return value type: 
-*/
 
 export function getDataForGraph(entries: GradeEntry[]) {
   const data: {
