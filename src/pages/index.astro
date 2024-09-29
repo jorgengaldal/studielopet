@@ -17,12 +17,14 @@ import { getColorByStudyProgrammeCode } from "../utils/utils";
 
 // Values for specifying graph
 const filtering = {
-  classCode: "TDT4120-1",
+  classCode: "TDT4140-1",
   year: 2023,
-  semester: "Høst",
+  semester: "Vår",
 };
 
-const gradeEntries = await getGradeEntries();
+const gradeEntries = await getGradeEntries(["BIT", "MTDT"], [
+              filtering.classCode
+            ]);
 
 const data = getDataForGraph(
   gradeEntries.filter((entry) => allEquals(entry, filtering))
@@ -32,7 +34,9 @@ const data = getDataForGraph(
 <Layout title="Halla, Kalla!">
   <main>
     <h1>Studie<span class="text-gradient">løpet</span></h1>
-    <div class="bg-gray-800 p-5 flex flex-col gap-5">
+    <div class="bg-gray-800 p-5 flex flex-col ">
+      <h2 class="">{filtering.classCode.slice(0, -2)}</h2>
+      <h3 class="italic text-sm mb-2">{filtering.semester} {filtering.year}</h3>
       <BarGraph
         data={data}
         seriesConfig={getUnique(

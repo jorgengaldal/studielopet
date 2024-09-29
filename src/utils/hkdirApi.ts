@@ -1,10 +1,15 @@
+import { number } from "astro:schema";
 import type { GradeEntry } from "../types";
 import { getColorByStudyProgrammeCode } from "./utils";
 
 const API_BASE =
   "https://dbh-data.dataporten-api.no/Tabeller/hentCSVTabellData";
 
-const fetchEntries = async () => {
+const fetchEntries = async (
+  studyProgrammeCodes?: string[],
+  classCodes?: string[],
+  numberOfLastYears?: number
+) => {
   return await fetch(API_BASE, {
     method: "POST",
     headers: {
@@ -49,7 +54,7 @@ const fetchEntries = async () => {
           variabel: "Studieprogramkode",
           selection: {
             filter: "item",
-            values: ["BIT", "MTDT"],
+            values: studyProgrammeCodes ?? ["BIT", "MTDT"],
             exclude: [""],
           },
         },
@@ -65,17 +70,7 @@ const fetchEntries = async () => {
           variabel: "Emnekode",
           selection: {
             filter: "item",
-            values: [
-              "TDT4120-1",
-              "TDT4160-1",
-              "TDT4109-1",
-              "TDT4100-1",
-              "IT1901-1",
-              "EXPH0300-1",
-              "TDT4145-1",
-              "TPD4114-1",
-              "IT2901-1",
-            ],
+            values: classCodes ?? ["TDT4120-1"],
             exclude: [""],
           },
         },
@@ -83,7 +78,7 @@ const fetchEntries = async () => {
           variabel: "Årstall",
           selection: {
             filter: "top",
-            values: ["1"],
+            values: [String(numberOfLastYears ?? 1)],
             exclude: [""],
           },
         },
@@ -92,8 +87,12 @@ const fetchEntries = async () => {
   }).then((response) => response.text());
 };
 
-export const getGradeEntries = async (): Promise<GradeEntry[]> => {
-  const gradeEntries: GradeEntry[] = (await fetchEntries())
+export const getGradeEntries = async (
+  studyProgrammeCodes?: string[],
+  classCodes?: string[],
+  numberOfLastYears?: number
+): Promise<GradeEntry[]> => {
+  const gradeEntries: GradeEntry[] = (await fetchEntries(studyProgrammeCodes, classCodes, numberOfLastYears))
     .split("\n")
     .splice(1) // Remove headings
     .map((line) => {
@@ -112,6 +111,9 @@ export const getGradeEntries = async (): Promise<GradeEntry[]> => {
     })
     .slice(0, -1); // remove last undefined object
 
+    console.log(gradeEntries);
+    
+
   return gradeEntries;
 };
 
@@ -126,7 +128,6 @@ export function getDataForGraph(entries: GradeEntry[]) {
     if (!data[entry.grade]) {
       data[entry.grade] = [];
     }
-
 
     data[entry.grade].push({
       studyProgrammeCode: entry.studyProgrammeCode,
@@ -146,6 +147,9 @@ export function getDataForGraph(entries: GradeEntry[]) {
           barOrdering.indexOf(a.studyProgrammeCode) -
           barOrdering.indexOf(b.studyProgrammeCode)
       )
-      .map((bar) => ({ value: bar.value, color: getColorByStudyProgrammeCode(bar.studyProgrammeCode)})),
+      .map((bar) => ({
+        value: bar.value,
+        color: getColorByStudyProgrammeCode(bar.studyProgrammeCode),
+      })),
   }));
 }
