@@ -1,25 +1,33 @@
 ---
+import type { GetStaticPaths } from "astro";
 import Layout from "../layouts/Layout.astro";
-import { getDataForGraph, getGradeEntries } from "../utils/hkdirApi";
-import { allEquals, getUnique } from "../utils/object";
 import BarGraph from "../components/graphs/BarGraph.astro";
+import GraphSelector from "../components/GraphSelector.tsx";
+import { allEquals, getUnique } from "../utils/object";
 import { getColorByStudyProgrammeCode } from "../utils/utils";
+import { getGradeEntries, getDataForGraph } from "../utils/hkdirApi";
 
-// const testData: BarGraphData
-//  = {data: [
-//   { label: "A", bars: [{ value: 15, color: "#0d5474" }, { value: 12 }] },
-//   { label: "B", bars: [{ value: 23, color: "#0d5474"  }, { value: 12 }] },
-//   { label: "C", bars: [{ value: 9, color: "#0d5474"  }, { value: 8 }] },
-//   { label: "D", bars: [{ value: 14, color: "#0d5474" }, { value: 9 }] },
-//   { label: "E", bars: [{ value: 25, color: "#0d5474"  }, { value: 15 }] },
-//   { label: "F", bars: [{ value: 29, color: "#0d5474"  }, { value: 2 }] },
-// ]};
+export const getStaticPaths = (() => {
+    return [
+  "TDT4120-1",
+  "TDT4160-1",
+  "TDT4109-1",
+  "TDT4100-1",
+  "IT1901-1",
+  "EXPH0300-1",
+  "TDT4145-1",
+  "TPD4114-1",
+  "IT2901-1",
+].map(code => ({params: {classCode: code}}));
+}) satisfies GetStaticPaths;
+
+const {classCode} = Astro.params;
 
 // Values for specifying graph
 const filtering = {
-  classCode: "TDT4140-1",
+  classCode: classCode,
   year: 2023,
-  semester: "Vår",
+  semester: "Høst",
 };
 
 const gradeEntries = await getGradeEntries(["BIT", "MTDT"], [
@@ -31,10 +39,11 @@ const data = getDataForGraph(
 );
 ---
 
-<Layout title="Studieløpet">
-  <main>
-    <h1>Studie<span class="text-gradient">løpet</span></h1>
+<Layout title={`Studieløpet | ${classCode}`}>
+    <main>
+        <h1>Studie<span class="text-gradient">løpet</span></h1>
     <div class="bg-gray-800 p-5 flex flex-col ">
+      <GraphSelector client:load/>
       <h2 class="">{filtering.classCode.slice(0, -2)}</h2>
       <h3 class="italic text-sm mb-2">{filtering.semester} {filtering.year}</h3>
       <BarGraph
@@ -47,6 +56,5 @@ const data = getDataForGraph(
           color: getColorByStudyProgrammeCode(code),
         }))}
       />
-    </div>
-  </main>
+    </main>
 </Layout>
