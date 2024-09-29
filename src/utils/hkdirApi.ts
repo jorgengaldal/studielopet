@@ -1,16 +1,15 @@
-import { number } from "astro:schema";
 import type { GradeEntry } from "../types";
 import { getColorByStudyProgrammeCode } from "./utils";
 
 const API_BASE =
-  "https://dbh-data.dataporten-api.no/Tabeller/hentCSVTabellData";
+  "https://dbh-data.dataporten-api.no/Tabeller/hentJSONTabellData";
 
-const fetchEntries = async (
+export const fetchGradeEntries = async (
   studyProgrammeCodes?: string[],
   classCodes?: string[],
   numberOfLastYears?: number
-) => {
-  return await fetch(API_BASE, {
+): Promise<GradeEntry[]> => {
+  return (await fetch(API_BASE, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -84,37 +83,19 @@ const fetchEntries = async (
         },
       ],
     }),
-  }).then((response) => response.text());
-};
-
-export const getGradeEntries = async (
-  studyProgrammeCodes?: string[],
-  classCodes?: string[],
-  numberOfLastYears?: number
-): Promise<GradeEntry[]> => {
-  const gradeEntries: GradeEntry[] = (await fetchEntries(studyProgrammeCodes, classCodes, numberOfLastYears))
-    .split("\n")
-    .splice(1) // Remove headings
-    .map((line) => {
-      const vars = line.replaceAll('"', "").split(";");
-      return {
-        year: Number(vars[4]),
-        semester: vars[6],
-        studyProgrammeCode: vars[9],
-        studyProgrammeName: vars[10],
-        classCode: vars[11],
-        grade: vars[12],
-        totalCandidates: Number(vars[13]),
-        women: Number(vars[14]),
-        men: Number(vars[15]),
-      };
-    })
-    .slice(0, -1); // remove last undefined object
-
-    console.log(gradeEntries);
-    
-
-  return gradeEntries;
+  })
+  .then((response) => response.json()))
+  .map((entry: any) => ({
+    year: entry["Årstall"],
+    semester: entry["Semesternavn"],
+    studyProgrammeCode: entry["Studieprogramkode"],
+    studyProgrammeName: entry["Studieprogramnavn"],
+    classCode: entry["Emnekode"],
+    grade: entry["Karakter"],
+    totalCandidates: Number(entry["Antall kandidater totalt"]),
+    women: Number(entry["Antall kandidater kvinner"]),
+    men: Number(entry["Antall kandidater menn"]),
+  }));
 };
 
 export function getDataForGraph(entries: GradeEntry[]) {

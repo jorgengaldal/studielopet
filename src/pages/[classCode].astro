@@ -4,7 +4,7 @@ import Layout from "../layouts/Layout.astro";
 import BarGraph from "../components/graphs/BarGraph.astro";
 import { allEquals, getUnique } from "../utils/object";
 import { getColorByStudyProgrammeCode } from "../utils/utils";
-import { getGradeEntries, getDataForGraph } from "../utils/hkdirApi";
+import { fetchGradeEntries, getDataForGraph } from "../utils/hkdirApi";
 
 export const getStaticPaths = (() => {
     return [
@@ -29,7 +29,7 @@ const filtering = {
   semester: "Høst",
 };
 
-const gradeEntries = await getGradeEntries(["BIT", "MTDT"], [
+const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], [
               filtering.classCode
             ]);
 

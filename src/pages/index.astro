@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { getDataForGraph, getGradeEntries } from "../utils/hkdirApi";
+import { getDataForGraph, fetchGradeEntries } from "../utils/hkdirApi";
 import { allEquals, getUnique } from "../utils/object";
 import BarGraph from "../components/graphs/BarGraph.astro";
 import { getColorByStudyProgrammeCode } from "../utils/utils";
@@ -22,7 +22,7 @@ const filtering = {
   semester: "Vår",
 };
 
-const gradeEntries = await getGradeEntries(["BIT", "MTDT"], [
+const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], [
               filtering.classCode
             ]);
 
