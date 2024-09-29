@@ -2,7 +2,6 @@
 import type { GetStaticPaths } from "astro";
 import Layout from "../layouts/Layout.astro";
 import BarGraph from "../components/graphs/BarGraph.astro";
-import GraphSelector from "../components/GraphSelector.tsx";
 import { allEquals, getUnique } from "../utils/object";
 import { getColorByStudyProgrammeCode } from "../utils/utils";
 import { getGradeEntries, getDataForGraph } from "../utils/hkdirApi";
@@ -43,7 +42,6 @@ const data = getDataForGraph(
     <main>
         <h1>Studie<span class="text-gradient">løpet</span></h1>
     <div class="bg-gray-800 p-5 flex flex-col ">
-      <GraphSelector client:load/>
       <h2 class="">{filtering.classCode.slice(0, -2)}</h2>
       <h3 class="italic text-sm mb-2">{filtering.semester} {filtering.year}</h3>
       <BarGraph
