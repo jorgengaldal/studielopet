@@ -122,17 +122,35 @@ Wanted return value type:
 
 export function getDataForGraph(entries: GradeEntry[]) {
   const data: {
-    [grade: string]: { value: number; color?: string }[];
+    [grade: string]: {
+      studyProgrammeCode: string;
+      value: number;
+    }[];
   } = {};
   entries.forEach((entry) => {
     if (!data[entry.grade]) {
       data[entry.grade] = [];
     }
 
-    const color = getColorByStudyProgrammeCode(entry.studyProgrammeCode)
 
-    data[entry.grade].push({value: entry.totalCandidates, color: color});
+    data[entry.grade].push({
+      studyProgrammeCode: entry.studyProgrammeCode,
+      value: entry.totalCandidates,
+    });
   });
 
-  return Object.entries(data).map(([grade, bars]) => ({label: grade, bars: bars}))
+  const barOrdering = [
+    ...data[entries[0].grade].map((element) => element.studyProgrammeCode),
+  ];
+
+  return Object.entries(data).map(([grade, bars]) => ({
+    label: grade,
+    bars: bars
+      .toSorted(
+        (a, b) =>
+          barOrdering.indexOf(a.studyProgrammeCode) -
+          barOrdering.indexOf(b.studyProgrammeCode)
+      )
+      .map((bar) => ({ value: bar.value, color: getColorByStudyProgrammeCode(bar.studyProgrammeCode)})),
+  }));
 }
