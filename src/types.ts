@@ -10,7 +10,15 @@ export interface GradeEntry {
   men: number;
 }
 
-export type BarGraphData = {
-  label?: string;
-  bars: { value: number; color?: string }[];
-}[];
+
+export type BarGraphData = 
+{
+    data: {
+        label?: string;
+        bars: { value: number; color?: string }[];
+    }[];
+    seriesConfig?: {
+        label?: string,
+        color?: string,
+    }[]
+}

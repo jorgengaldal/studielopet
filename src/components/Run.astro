@@ -1,179 +1,36 @@
 ---
-import type { GradeEntry } from "../types";
+import { allEquals, getUnique } from "../utils/object";
+import { getGradeEntries, getDataForGraph } from "../utils/hkdirApi";
 import BarGraph from "./graphs/BarGraph.astro";
-import Track from "./Track.astro";
+import { getColorByStudyProgrammeCode } from "../utils/utils";
 
-const test = [{ length: 2 }, { length: 3 }, { length: 8 }, { length: 5 }];
-
-const API_BASE =
-  "https://dbh-data.dataporten-api.no/Tabeller/hentCSVTabellData";
-
-const result = await fetch(API_BASE, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    tabell_id: 308,
-    api_versjon: 1,
-    statuslinje: "N",
-    begrensning: "10000",
-    kodetekst: "J",
-    desimal_separator: ".",
-    groupBy: [
-      "Institusjonskode",
-      "Avdelingskode",
-      "Årstall",
-      "Semester",
-      "Studentkategori",
-      "Studieprogramkode",
-      "Emnekode",
-      "Karakter",
-    ],
-    sortBy: ["Institusjonskode", "Avdelingskode"],
-    filter: [
-      {
-        variabel: "Institusjonskode",
-        selection: {
-          filter: "item",
-          values: ["1150"],
-          exclude: [""],
-        },
-      },
-      {
-        variabel: "Avdelingskode",
-        selection: {
-          filter: "item",
-          values: ["273824"],
-          exclude: [""],
-        },
-      },
-      {
-        variabel: "Studieprogramkode",
-        selection: {
-          filter: "item",
-          values: ["BIT", "MTDT"],
-          exclude: [""],
-        },
-      },
-      {
-        variabel: "Studentkategori",
-        selection: {
-          filter: "item",
-          values: ["S"],
-          exclude: [""],
-        },
-      },
-      {
-        variabel: "Emnekode",
-        selection: {
-          filter: "item",
-          values: [
-            "TDT4120-1",
-            "TDT4160-1",
-            "TDT4109-1",
-            "TDT4100-1",
-            "IT1901-1",
-            "EXPH0300-1",
-            "TDT4145-1",
-            "TPD4114-1",
-            "IT2901-1"
-          ],
-          exclude: [""],
-        },
-      },
-      {
-        variabel: "Årstall",
-        selection: {
-          filter: "top",
-          values: ["1"],
-          exclude: [""],
-        },
-      },
-    ],
-  }),
-}).then((response) => response.text());
-
-const gradeEntries: GradeEntry[] = result.split("\n").map((line) => {
-  const vars = line.replaceAll('"', "").split(";");
-  return {
-    year: Number(vars[4]),
-    semester: vars[6],
-    studyProgrammeCode: vars[9],
-    studyProgrammeName: vars[10],
-    classCode: vars[11],
-    grade: vars[12],
-    totalCandidates: Number(vars[13]),
-    women: Number(vars[14]),
-    men: Number(vars[15]),
-  };
-}).splice(1);
-
-type MapFunction = (a: GradeEntry) => any;
-
-const getUnique = (mapFunction: MapFunction) => {
-  return new Array(...new Set(gradeEntries.map((ob) => mapFunction(ob))));
+// Values for specifying graph
+const filtering = {
+  classCode: "TDT4120-1",
+  year: 2023,
+  semester: "Høst",
 };
 
-const grades = ["A", "B", "C", "D", "E", "F"];
+const gradeEntries = await getGradeEntries();
+
+const data = getDataForGraph(
+  gradeEntries.filter((entry) => allEquals(entry, filtering))
+);
+
+console.log(data.map(t => t.bars))
 ---
 
 <div class="bg-gray-800 p-5 flex flex-col gap-5">
-  {
-    getUnique((object) => object.year)
-      .flatMap((year) => {
-        return {
-          year: year,
-          content: getUnique((object) => object.studyProgrammeCode).flatMap(
-            (studyProgrammeCode) => {
-              return {
-                studyProgrammeCode: studyProgrammeCode,
-                content: getUnique((object) => object.grade).flatMap(
-                  (grade) => {
-                    return gradeEntries
-                      .filter(
-                        (object) =>
-                          object.year == year &&
-                          object.studyProgrammeCode == studyProgrammeCode &&
-                          object.classCode.startsWith("TDT4120") &&
-                          object.grade == grade
-                      )
-                      .map((object) => {
-                        return {
-                          year: object.year,
-                          studyProgrammeCode: object.studyProgrammeCode,
-                          grade: object.grade,
-                          totalCandidates: object.totalCandidates,
-                        };
-                      });
-                  }
-                ),
-              };
-            }
-          ),
-        };
-      })
-      .map((year) => {
-        console.log(year.content);
-        return (
-          <div>
-            <h2>Year: {year.year}</h2>
-            {year.content.map((value) => 
-                <div>
-                  <h3>{value.studyProgrammeCode}</h3>
-                  <BarGraph data={value.content.map((val) => {
-                      return {label: val.grade, value: val.totalCandidates}
-                    })}/>
-                  <div class="flex flex-row justify-between">
-                    
-                  </div>
-                </div>
-              )
-            }
-          </div>
-        );
-      })
-  }
+  <BarGraph
+    data={data}
+    seriesConfig={getUnique(
+      gradeEntries,
+      (entry) => entry.studyProgrammeCode
+    ).map((code) => ({
+      label: code,
+      color: getColorByStudyProgrammeCode(code),
+    }))}
+  />
 </div>
 
 <style></style>

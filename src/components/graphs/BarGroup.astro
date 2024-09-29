@@ -1,15 +1,21 @@
 ---
 interface Props {
   bars: { value: number; color?: string }[];
+  seriesConfig?: {
+    color?: string,
+    label?: string,
+  }[]
 }
-const { bars } = Astro.props;
+const { bars, seriesConfig } = Astro.props;
 
 const maxValue = Math.max(...bars.map((bar) => bar.value));
+
+const DEFAULT_COLOR = "#E21617"
 ---
 
 <div class="h-full w-full flex flex-row justify-end items-center">
   {
-    bars.map(({ value, color }) => {
+    bars.map(({ value, color }, index) => {
       return (
         <div class="h-full w-full flex flex-col justify-end">
           <div
@@ -19,7 +25,7 @@ const maxValue = Math.max(...bars.map((bar) => bar.value));
               (value / maxValue) * 100 +
               "%; " +
               "background-color: " +
-              (color ?? "#E21617")
+              (color ?? (seriesConfig && (seriesConfig[index].color ?? DEFAULT_COLOR)))
             }
           >
             <p class="absolute -top-5 text-sm italic font-thin">{value}</p>

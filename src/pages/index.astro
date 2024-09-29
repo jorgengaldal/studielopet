@@ -1,27 +1,24 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Card from "../components/Card.astro";
-import Track from "../components/Track.astro";
 import Run from "../components/Run.astro";
-import BarGraph from "../components/graphs/BarGraph.astro";
 import type { BarGraphData } from "../types";
 
 const testData: BarGraphData
- = [
+ = {data: [
   { label: "A", bars: [{ value: 15, color: "#0d5474" }, { value: 12 }] },
   { label: "B", bars: [{ value: 23, color: "#0d5474"  }, { value: 12 }] },
   { label: "C", bars: [{ value: 9, color: "#0d5474"  }, { value: 8 }] },
   { label: "D", bars: [{ value: 14, color: "#0d5474" }, { value: 9 }] },
   { label: "E", bars: [{ value: 25, color: "#0d5474"  }, { value: 15 }] },
   { label: "F", bars: [{ value: 29, color: "#0d5474"  }, { value: 2 }] },
-];
+]};
 ---
 
 <Layout title="Halla, Kalla!">
   <main>
     <h1>Studie<span class="text-gradient">løpet</span></h1>
-    <BarGraph data={testData} />
-    <!-- <Run /> -->
+    <!-- <BarGraph data={testData} /> -->
+    <Run />
   </main>
 </Layout>
 
