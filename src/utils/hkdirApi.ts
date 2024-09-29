@@ -1,4 +1,4 @@
-import type { GradeEntry } from "../types";
+import type { Class, GradeEntry } from "../types";
 import { getColorByStudyProgrammeCode } from "./utils";
 
 const API_BASE =
@@ -9,85 +9,86 @@ export const fetchGradeEntries = async (
   classCodes?: string[],
   numberOfLastYears?: number
 ): Promise<GradeEntry[]> => {
-  return (await fetch(API_BASE, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      tabell_id: 308,
-      api_versjon: 1,
-      statuslinje: "N",
-      begrensning: "10000",
-      kodetekst: "J",
-      desimal_separator: ".",
-      groupBy: [
-        "Institusjonskode",
-        "Avdelingskode",
-        "Årstall",
-        "Semester",
-        "Studentkategori",
-        "Studieprogramkode",
-        "Emnekode",
-        "Karakter",
-      ],
-      sortBy: ["Institusjonskode", "Avdelingskode"],
-      filter: [
-        {
-          variabel: "Institusjonskode",
-          selection: {
-            filter: "item",
-            values: ["1150"],
-            exclude: [""],
+  return (
+    await fetch(API_BASE, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tabell_id: 308,
+        api_versjon: 1,
+        statuslinje: "N",
+        begrensning: "10000",
+        kodetekst: "J",
+        desimal_separator: ".",
+        groupBy: [
+          "Institusjonskode",
+          "Avdelingskode",
+          "Årstall",
+          "Semester",
+          "Studentkategori",
+          "Studieprogramkode",
+          "Emnekode",
+          "Karakter",
+        ],
+        sortBy: ["Institusjonskode", "Avdelingskode"],
+        filter: [
+          {
+            variabel: "Institusjonskode",
+            selection: {
+              filter: "item",
+              values: ["1150"],
+              exclude: [""],
+            },
           },
-        },
-        {
-          variabel: "Avdelingskode",
-          selection: {
-            filter: "item",
-            values: ["273824"],
-            exclude: [""],
+          {
+            variabel: "Avdelingskode",
+            selection: {
+              filter: "item",
+              values: ["273824"],
+              exclude: [""],
+            },
           },
-        },
-        {
-          variabel: "Studieprogramkode",
-          selection: {
-            filter: "item",
-            values: studyProgrammeCodes ?? ["BIT", "MTDT"],
-            exclude: [""],
+          {
+            variabel: "Studieprogramkode",
+            selection: {
+              filter: "item",
+              values: studyProgrammeCodes ?? ["BIT", "MTDT"],
+              exclude: [""],
+            },
           },
-        },
-        {
-          variabel: "Studentkategori",
-          selection: {
-            filter: "item",
-            values: ["S"],
-            exclude: [""],
+          {
+            variabel: "Studentkategori",
+            selection: {
+              filter: "item",
+              values: ["S"],
+              exclude: [""],
+            },
           },
-        },
-        {
-          variabel: "Emnekode",
-          selection: {
-            filter: "item",
-            values: classCodes ?? ["TDT4120-1"],
-            exclude: [""],
+          {
+            variabel: "Emnekode",
+            selection: {
+              filter: "item",
+              values: classCodes ?? ["TDT4120-1"],
+              exclude: [""],
+            },
           },
-        },
-        {
-          variabel: "Årstall",
-          selection: {
-            filter: "top",
-            values: [String(numberOfLastYears ?? 1)],
-            exclude: [""],
+          {
+            variabel: "Årstall",
+            selection: {
+              filter: "top",
+              values: [String(numberOfLastYears ?? 1)],
+              exclude: [""],
+            },
           },
-        },
-      ],
-    }),
-  })
-  .then((response) => response.json()))
-  .map((entry: any) => ({
+        ],
+      }),
+    }).then((response) => response.json())
+  ).map((entry: any) => ({
     year: entry["Årstall"],
     semester: entry["Semesternavn"],
+    semesterCode: entry["Semester"],
     studyProgrammeCode: entry["Studieprogramkode"],
     studyProgrammeName: entry["Studieprogramnavn"],
     classCode: entry["Emnekode"],
@@ -98,6 +99,67 @@ export const fetchGradeEntries = async (
   }));
 };
 
+export const fetchClasses = async (
+  numberOfLastYears?: number
+): Promise<Class[]> => {
+  return (
+    await fetch(API_BASE, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tabell_id: 208,
+        api_versjon: 1,
+        statuslinje: "N",
+        begrensning: "10000",
+        kodetekst: "J",
+        desimal_separator: ".",
+        variabler: [
+          "Institusjonskode",
+          "Avdelingskode",
+          "Årstall",
+          "Semester",
+          "Emnekode",
+          "Emnenavn",
+        ],
+        sortBy: ["Institusjonskode", "Avdelingskode"],
+        filter: [
+          {
+            variabel: "Institusjonskode",
+            selection: {
+              filter: "item",
+              values: ["1150"],
+              exclude: [""],
+            },
+          },
+          {
+            variabel: "Avdelingskode",
+            selection: {
+              filter: "item",
+              values: ["273824"],
+              exclude: [""],
+            },
+          },
+          {
+            variabel: "Årstall",
+            selection: {
+              filter: "top",
+              values: [String(numberOfLastYears ?? 1)],
+              exclude: [""],
+            },
+          },
+        ],
+      }),
+    }).then((response) => response.json())
+  ).map((entry: any) => ({
+    classCode: entry["Emnekode"],
+    className: entry["Emnenavn"],
+    year: entry["Årstall"],
+    semester: entry["Semesternavn"],
+  }));
+};
+
 export function getDataForGraph(entries: GradeEntry[]) {
   const data: {
     [grade: string]: {
@@ -105,6 +167,8 @@ export function getDataForGraph(entries: GradeEntry[]) {
       value: number;
     }[];
   } = {};
+
+  console.log(entries)
   entries.forEach((entry) => {
     if (!data[entry.grade]) {
       data[entry.grade] = [];

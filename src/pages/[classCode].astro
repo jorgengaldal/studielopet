@@ -1,41 +1,35 @@
 ---
-import type { GetStaticPaths } from "astro";
+export const prerender = false;
+
 import Layout from "../layouts/Layout.astro";
 import BarGraph from "../components/graphs/BarGraph.astro";
 import { allEquals, getUnique } from "../utils/object";
 import { getColorByStudyProgrammeCode } from "../utils/utils";
-import { fetchGradeEntries, getDataForGraph } from "../utils/hkdirApi";
+import { fetchClasses, fetchGradeEntries, getDataForGraph } from "../utils/hkdirApi";
 
-export const getStaticPaths = (() => {
-    return [
-  "TDT4120-1",
-  "TDT4160-1",
-  "TDT4109-1",
-  "TDT4100-1",
-  "IT1901-1",
-  "EXPH0300-1",
-  "TDT4145-1",
-  "TPD4114-1",
-  "IT2901-1",
-].map(code => ({params: {classCode: code}}));
-}) satisfies GetStaticPaths;
+const allClasses = (await fetchClasses())
 
 const {classCode} = Astro.params;
+const page = allClasses.find((classObject) => classObject.classCode.slice(0, -2) === classCode);
+if (!page) return Astro.redirect("/404");
 
 // Values for specifying graph
 const filtering = {
-  classCode: classCode,
-  year: 2023,
-  semester: "Høst",
+  classCode: page.classCode,
+  year: page.year,
+//   semester: page.semester,
 };
 
 const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], [
               filtering.classCode
-            ]);
+            ], 2);
 
-const data = getDataForGraph(
-  gradeEntries.filter((entry) => allEquals(entry, filtering))
-);
+console.log(gradeEntries)
+
+const filteredGradeEntries = gradeEntries.filter((entry) => allEquals(entry, filtering))
+const data = getDataForGraph(filteredGradeEntries);
+
+const semester = filteredGradeEntries[0].semester
 ---
 
 <Layout title={`Studieløpet | ${classCode}`}>
@@ -43,7 +37,7 @@ const data = getDataForGraph(
         <h1>Studie<span class="text-gradient">løpet</span></h1>
     <div class="bg-gray-800 p-5 flex flex-col ">
       <h2 class="">{filtering.classCode.slice(0, -2)}</h2>
-      <h3 class="italic text-sm mb-2">{filtering.semester} {filtering.year}</h3>
+      <h3 class="italic text-sm mb-2">{semester} {filtering.year}</h3>
       <BarGraph
         data={data}
         seriesConfig={getUnique(

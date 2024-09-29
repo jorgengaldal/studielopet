@@ -10,6 +10,12 @@ export interface GradeEntry {
   men: number;
 }
 
+export interface Class {
+    classCode: string;
+    className: string;
+    year: string;
+    semester: string;
+}
 
 export type BarGraphData = 
 {
