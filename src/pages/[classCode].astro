@@ -33,8 +33,6 @@ const semester = filteredGradeEntries[0].semester
 ---
 
 <Layout title={`Studieløpet | ${classCode}`}>
-    <main>
-        <h1>Studie<span class="text-gradient">løpet</span></h1>
     <div class="bg-gray-800 p-5 flex flex-col ">
       <h2 class="">{filtering.classCode.slice(0, -2)}</h2>
       <h3 class="italic text-sm mb-2">{semester} {filtering.year}</h3>
@@ -48,5 +46,4 @@ const semester = filteredGradeEntries[0].semester
           color: getColorByStudyProgrammeCode(code),
         }))}
       />
-    </main>
 </Layout>

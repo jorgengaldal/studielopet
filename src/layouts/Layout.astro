@@ -1,4 +1,6 @@
 ---
+import { SearchBar } from '../components/SearchBar';
+
 interface Props {
 	title: string;
 }
@@ -17,7 +19,11 @@ const { title } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
-		<slot />
+    <main>
+      <a href="/"><h1>Studie<span class="text-gradient">løpet</span></h1></a>
+      <SearchBar client:load/>
+      <slot />
+    </main>
 	</body>
 </html>
 <style is:global>
@@ -34,7 +40,7 @@ const { title } = Astro.props;
 	}
 	html {
 		font-family: system-ui, sans-serif;
-		background: #13151a;
+		background: #222;
 	}
 	
 	code {
