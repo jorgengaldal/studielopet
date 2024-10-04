@@ -40,7 +40,7 @@ export const SearchBar = () => {
 
             <div className="relative w-full">
                 <input
-                    className="w-full bg-dark outline-none pl-10 p-2 rounded-full focus:rounded-none focus:rounded-t-xl"
+                    className="transition-all ease-out duration-300 w-full bg-dark outline-none pl-10 p-2 rounded-[1.5em] focus:rounded-b-sm focus:rounded-t-xl"
                     type="text"
                     onChange={handleTyping}
 
