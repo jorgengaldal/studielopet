@@ -52,7 +52,7 @@ export const SearchBar = () => {
     };
 
     return (
-        <div className="flex flex-col justify-center divide-y gap-1 divide-accent">
+        <div style={{ viewTransitionName: "searchbar" }} className="flex flex-col justify-center divide-y gap-1 divide-accent">
 
             <div className="relative w-full">
                 <div className="absolute inset-y-3 px-2">
