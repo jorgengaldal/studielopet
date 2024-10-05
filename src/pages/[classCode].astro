@@ -5,9 +5,9 @@ import { allEquals, getUnique } from "../utils/object";
 import { getColorByStudyProgrammeCode } from "../utils/utils";
 import { fetchClasses, fetchGradeEntries, getDataForGraph } from "../utils/hkdirApi";
 
-
 export async function getStaticPaths() {
   const allClasses = await fetchClasses()
+  console.log(allClasses)
   
   return allClasses.map(classs => {
     return {
@@ -23,26 +23,31 @@ const { classs } = Astro.props;
 // Values for specifying graph
 const filtering = {
   classCode: classs.classCode,
-  year: classs.year,
+  // year: classs.year,
 //   semester: page.semester,
 };
 
-const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], [
-              filtering.classCode
-            ], 2);
+const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], filtering.classCode, 2);
 
-console.log(gradeEntries)
 
 const filteredGradeEntries = gradeEntries.filter((entry) => allEquals(entry, filtering))
-const data = getDataForGraph(filteredGradeEntries);
 
-const semester = filteredGradeEntries[0].semester
+let data;
+let semester;
+let year;
+
+if (filteredGradeEntries.length != 0) {
+  data = getDataForGraph(filteredGradeEntries);
+  semester = filteredGradeEntries[0].semester
+  year = filteredGradeEntries[0].year
+}
+  
 ---
 
 <Layout title={`Studieløpet | ${classCode}`}>
     <div class="bg-gray-800 p-5 flex flex-col ">
       <h2 class="">{filtering.classCode.slice(0, -2)}</h2>
-      <h3 class="italic text-sm mb-2">{semester} {filtering.year}</h3>
+      {data ? <h3 class="italic text-sm mb-2">{semester} {year}</h3>
       <BarGraph
         data={data}
         seriesConfig={getUnique(
@@ -52,5 +57,6 @@ const semester = filteredGradeEntries[0].semester
           label: code,
           color: getColorByStudyProgrammeCode(code),
         }))}
-      />
+      /> :
+      <p><i>Ingen data for de spesifiserte parametrene.</i></p>}
 </Layout>

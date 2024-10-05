@@ -6,7 +6,7 @@ const API_BASE =
 
 export const fetchGradeEntries = async (
   studyProgrammeCodes?: string[],
-  classCodes?: string[],
+  classCode?: string,
   numberOfLastYears?: number
 ): Promise<GradeEntry[]> => {
   return (
@@ -18,7 +18,7 @@ export const fetchGradeEntries = async (
       body: JSON.stringify({
         tabell_id: 308,
         api_versjon: 1,
-        statuslinje: "N",
+        statuslinje: "J",
         begrensning: "10000",
         kodetekst: "J",
         desimal_separator: ".",
@@ -45,8 +45,8 @@ export const fetchGradeEntries = async (
           {
             variabel: "Avdelingskode",
             selection: {
-              filter: "item",
-              values: ["273824"],
+              filter: "all",
+              values: ["*"],
               exclude: [""],
             },
           },
@@ -70,7 +70,7 @@ export const fetchGradeEntries = async (
             variabel: "Emnekode",
             selection: {
               filter: "item",
-              values: classCodes ?? ["TDT4120-1"],
+              values: [classCode ?? "TDT4120-1"],
               exclude: [""],
             },
           },
@@ -84,7 +84,14 @@ export const fetchGradeEntries = async (
           },
         ],
       }),
-    }).then((response) => response.json())
+    }).then((response) => {
+      if (response.statusText == "No Content") {
+        return []
+      }
+      else {
+        return response.json()
+      }
+    })
   ).map((entry: any) => ({
     year: entry["Årstall"],
     semester: entry["Semesternavn"],
@@ -122,6 +129,7 @@ export const fetchClasses = async (
           "Semester",
           "Emnekode",
           "Emnenavn",
+          "Status"
         ],
         sortBy: ["Institusjonskode", "Avdelingskode"],
         filter: [
@@ -144,8 +152,8 @@ export const fetchClasses = async (
           {
             variabel: "Årstall",
             selection: {
-              filter: "top",
-              values: [String(numberOfLastYears ?? 1)],
+              filter: "all",
+              values: ["*"],
               exclude: [""],
             },
           },
@@ -168,7 +176,6 @@ export function getDataForGraph(entries: GradeEntry[]) {
     }[];
   } = {};
 
-  console.log(entries)
   entries.forEach((entry) => {
     if (!data[entry.grade]) {
       data[entry.grade] = [];
