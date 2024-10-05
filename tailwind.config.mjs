@@ -5,7 +5,8 @@ export default {
 		extend: {
 			colors: {
 				dark: "#333",
-				accent: "#883aea"
+				accent: "#883aea",
+				subtle: "#888",
 			}
 		},
 	},
