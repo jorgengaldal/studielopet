@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchClasses } from "../utils/hkdirApi";
 import type { Class } from "../types";
 import { getUniqueObjectByPredicate } from "../utils/object";
+import { KeyboardHint } from "./KeyboardHint";
 
 const LIST_LENGTH = 10
 
@@ -9,6 +10,8 @@ export const SearchBar = () => {
     const [classes, setClasses] = useState<Class[]>([]);
     const [shownClasses, setShownClasses] = useState<Class[]>([]);
     const [showList, setShowList] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null)
+
 
     useEffect(() => {
         fetchClasses().then((classes) => {
@@ -21,6 +24,19 @@ export const SearchBar = () => {
             setShownClasses(allClasses.slice(0, LIST_LENGTH));
         });
     }, []);
+
+    useEffect(() => {
+        document.addEventListener("keydown", (e) => {
+            console.log(e.key)
+            const focused: boolean = document.activeElement == inputRef.current
+            if (e.ctrlKey && e.key == "k") {
+                e.preventDefault()
+                inputRef.current?.focus()
+            } else if (e.key == "Escape" && focused) {
+                inputRef.current?.blur()
+            }
+        })
+    })
 
     const handleTyping = (e: any) => {
         const searchWord = e.target.value;
@@ -39,8 +55,18 @@ export const SearchBar = () => {
         <div className="flex flex-col justify-center divide-y gap-1 divide-accent">
 
             <div className="relative w-full">
+                <div className="absolute inset-y-3 px-2">
+                    {/* Search icon */}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                </div>
+                <div className="absolute inset-y-2  px-2 ml-auto right-0">
+                    <KeyboardHint keys={["Ctrl", "K"]} />
+                </div>
                 <input
-                    className="transition-all ease-out duration-300 w-full bg-dark outline-none pl-10 p-2 rounded-[1.5em] focus:rounded-b-sm focus:rounded-t-xl"
+                    ref={inputRef}
+                    className="transition-all ease-out duration-300 w-full bg-dark outline-none p-2 pl-10 pe-12 rounded-[1.5em] focus:rounded-b-sm focus:rounded-t-xl"
                     type="text"
                     onChange={handleTyping}
 
@@ -53,12 +79,7 @@ export const SearchBar = () => {
                         setShowList(true);
                     }}
                 />
-                <div className="absolute inset-y-3 left-2">
-                    {/* Search icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                    </svg>
-                </div>
+
 
             </div>
 
