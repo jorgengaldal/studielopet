@@ -49,7 +49,7 @@ if (filteredGradeEntries.length != 0) {
 <Layout title={`Studieløpet | ${classCode}`}>
     <div class="bg-gray-800 p-5 flex flex-col ">
       <h2 class="">{filtering.classCode.slice(0, -2)}</h2>
-      {data ? <h3 class="italic text-sm mb-2">{semester} {year}</h3>
+      {data ? <h3 class="italic text-sm mb-2">{semester!} {year!}</h3>
       <BarGraph
         data={data}
         seriesConfig={getUnique(
