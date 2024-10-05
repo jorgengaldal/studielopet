@@ -1,22 +1,29 @@
 ---
-export const prerender = false;
-
 import Layout from "../layouts/Layout.astro";
 import BarGraph from "../components/graphs/BarGraph.astro";
 import { allEquals, getUnique } from "../utils/object";
 import { getColorByStudyProgrammeCode } from "../utils/utils";
 import { fetchClasses, fetchGradeEntries, getDataForGraph } from "../utils/hkdirApi";
 
-const allClasses = (await fetchClasses())
 
-const {classCode} = Astro.params;
-const page = allClasses.find((classObject) => classObject.classCode.slice(0, -2) === classCode);
-if (!page) return Astro.redirect("/404");
+export async function getStaticPaths() {
+  const allClasses = await fetchClasses()
+  
+  return allClasses.map(classs => {
+    return {
+      params: {classCode: classs.classCode.slice(0, -2)},
+      props: {classs},
+    }
+  });
+};
+
+const { classCode } = Astro.params;
+const { classs } = Astro.props;
 
 // Values for specifying graph
 const filtering = {
-  classCode: page.classCode,
-  year: page.year,
+  classCode: classs.classCode,
+  year: classs.year,
 //   semester: page.semester,
 };
 
