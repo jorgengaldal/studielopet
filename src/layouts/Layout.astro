@@ -1,7 +1,6 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
-import { SearchBar } from '../components/SearchBar';
 import BaseLayout from './BaseLayout.astro';
+import Navbar from './Navbar.astro';
 
 interface Props {
 	title: string;
@@ -11,10 +10,7 @@ const { title } = Astro.props;
 ---
 
 <BaseLayout title={title}>
-  <div class="w-full flex flex-row justify-center items-end gap-5 pb-5 mb-5 shadow-lg shadow-indigo-500/30 border-b-4 border-indigo-500">
-    <a href="/"><h1 class="m-0">Studie<span class="text-gradient">løpet</span></h1></a>
-    <SearchBar client:load/>
-  </div>
+  <Navbar />
   <main>
     <slot />
   </main>
