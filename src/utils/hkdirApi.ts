@@ -165,7 +165,9 @@ export const fetchClasses = async (
     className: entry["Emnenavn"],
     year: entry["Årstall"],
     semester: entry["Semesternavn"],
-  }));
+  }))
+  .filter((entry: Class) => entry.classCode != "ITX/V04-1");
+  // TODO: Fix better (with substitusjon of / symbol?)
 };
 
 export function getDataForGraph(entries: GradeEntry[]) {

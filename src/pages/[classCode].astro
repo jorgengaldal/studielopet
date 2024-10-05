@@ -33,13 +33,15 @@ const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], filtering.classCod
 const filteredGradeEntries = gradeEntries.filter((entry) => allEquals(entry, filtering))
 
 let data;
-let semester;
-let year;
+let semester: string;
+let year: number;
 
 if (filteredGradeEntries.length != 0) {
-  data = getDataForGraph(filteredGradeEntries);
   semester = filteredGradeEntries[0].semester
   year = filteredGradeEntries[0].year
+  data = getDataForGraph(filteredGradeEntries.filter((entry) => {
+    return entry.year == year && entry.semester == semester
+  }));
 }
   
 ---
