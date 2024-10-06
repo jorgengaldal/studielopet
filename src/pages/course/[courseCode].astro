@@ -1,11 +1,11 @@
 ---
 export const prerender = false;
 
-import Layout from "../layouts/Layout.astro";
-import BarGraph from "../components/graphs/BarGraph.astro";
-import { allEquals, getUnique } from "../utils/object";
-import { getColorByStudyProgrammeCode } from "../utils/utils";
-import { fetchCourses, fetchGradeEntries, getDataForGraph } from "../utils/hkdirApi";
+import Layout from "../../layouts/Layout.astro";
+import BarGraph from "../../components/graphs/BarGraph.astro";
+import { allEquals, getUnique } from "../../utils/object";
+import { getColorByStudyProgrammeCode } from "../../utils/utils";
+import { fetchCourses, fetchGradeEntries, getDataForGraph } from "../../utils/hkdirApi";
 
 const allCourses = (await fetchCourses())
 

@@ -93,7 +93,7 @@ export const SearchBar = () => {
                                     <a
                                         className="block"
                                         key={index}
-                                        href={"/" + object.courseCode.slice(0, -2)}
+                                        href={"/course/" + object.courseCode.slice(0, -2)}
                                     >
                                         {object.courseName} ({object.courseCode.slice(0, -2)})
                                     </a>
