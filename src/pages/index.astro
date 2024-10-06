@@ -1,14 +1,15 @@
 ---
 import { SearchBar } from "../components/SearchBar";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Footer from "../layouts/Footer.astro";
 ---
 
 <BaseLayout title="Studieløpet">
-  <main class="flex justify-center items-center h-screen">
-
-    <div class="flex flex-col justify-center w-full h-full gap-10">
-      <a href="/" transition:name="title"><h1 class="m-0">Studie<span class="text-gradient">løpet</span></h1></a>
-      <SearchBar transition:name="searchbar" client:load/>
-    </div>
-  </main>
+    <main class="flex justify-center items-center h-full row-span-2 my-auto">
+      <div class="flex flex-col justify-center w-full h-full gap-10">
+        <a href="/" transition:name="title"><h1 class="m-0">Studie<span class="text-gradient">løpet</span></h1></a>
+        <SearchBar transition:name="searchbar" client:load/>
+      </div>
+    </main>
+    <Footer />
 </BaseLayout>

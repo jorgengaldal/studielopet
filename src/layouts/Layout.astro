@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import Footer from './Footer.astro';
 import Navbar from './Navbar.astro';
 
 interface Props {
@@ -11,7 +12,8 @@ const { title } = Astro.props;
 
 <BaseLayout title={title}>
   <Navbar />
-  <main>
+  <main class="flex flex-col justify-start items-center mb-auto mt-0">
     <slot />
   </main>
+  <Footer />
 </BaseLayout>
