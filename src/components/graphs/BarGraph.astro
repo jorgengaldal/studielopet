@@ -2,6 +2,7 @@
 import { wholeNumberRange } from "../../utils/number";
 import type { BarGraphData } from "../../types";
 import BarGroup from "./BarGroup.astro";
+import Link from "../Link.astro";
 
 type Props = BarGraphData;
 
@@ -23,58 +24,71 @@ const maxValue = maxValueBeforeCorrection;
 const Y_AXIS_GUIDELINES_TARGET = 10;
 ---
 
-<div
-  class="flex flex-row justify-around gap-1 h-full w-full bg-white aspect-video text-black p-5 pb-10"
->
-  <div class="flex flex-col gap-5">
-    <div class="flex flex-row gap-3 justify-end">
-      {seriesConfig?.map(({label, color}) => {
-        return <span class="rounded-full px-2 text-white" style={`background-color: ${color}`}>{label}</span>
-      })}
-    </div>
-    <div
-      class="relative flex flex-row justify-around gap-6 h-full w-full border-l-2 border-b-2 border-black bg-white aspect-video text-black px-5 ml-5"
-    >
-      <div
-        class="absolute flex flex-col justify-between h-[104%] self-center -left-6"
-      >
+<div class="flex flex-col">
+  <div
+    class="flex flex-row justify-around gap-1 h-full w-full bg-white aspect-video text-black p-5 pb-10"
+  >
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-row gap-3 justify-end">
         {
-          wholeNumberRange(maxValue, Y_AXIS_GUIDELINES_TARGET)
-            .reverse()
-            .map((num) => {
-              return <p class="text-sm font-bold text-end">{num}</p>;
-            })
-        }
-      </div>
-      <!-- Horizontal lines -->
-      <div class="absolute h-full w-full flex flex-col justify-between">
-        {
-          wholeNumberRange(maxValue, Y_AXIS_GUIDELINES_TARGET).map((num) => {
-            return <div class="bg-slate-300 w-full h-px" />;
+          seriesConfig?.map(({ label, color }) => {
+            return (
+              <span
+                class="rounded-full px-2 text-white"
+                style={`background-color: ${color}`}
+              >
+                {label}
+              </span>
+            );
           })
         }
       </div>
-      {
-        data
-        .toSorted((a, b) => a.label.localeCompare(b.label)) // Sorts based on label
-        .map(({ label, bars }, index) => {
-          return (
-            <div class="relative h-full w-full flex flex-col justify-end items-center">
-              <div
-                class="w-full"
-                style={
-                  "height: " +
-                  (Math.max(...bars.map((bar) => bar.value)) / maxValue) * 100 +
-                  "%;"
-                }
-              >
-                <BarGroup bars={bars} seriesConfig={seriesConfig}/>
-              </div>
-              <p class="absolute -bottom-8">{label}</p>
-            </div>
-          );
-        })
-      }
+      <div
+        class="relative flex flex-row justify-around gap-6 h-full w-full border-l-2 border-b-2 border-black bg-white aspect-video text-black px-5 ml-5"
+      >
+        <div
+          class="absolute flex flex-col justify-between h-[104%] self-center -left-6"
+        >
+          {
+            wholeNumberRange(maxValue, Y_AXIS_GUIDELINES_TARGET)
+              .reverse()
+              .map((num) => {
+                return <p class="text-sm font-bold text-end">{num}</p>;
+              })
+          }
+        </div>
+        <!-- Horizontal lines -->
+        <div class="absolute h-full w-full flex flex-col justify-between">
+          {
+            wholeNumberRange(maxValue, Y_AXIS_GUIDELINES_TARGET).map((num) => {
+              return <div class="bg-slate-300 w-full h-px" />;
+            })
+          }
+        </div>
+        {
+          data
+            .toSorted((a, b) => a.label.localeCompare(b.label)) // Sorts based on label
+            .map(({ label, bars }, index) => {
+              return (
+                <div class="relative h-full w-full flex flex-col justify-end items-center">
+                  <div
+                    class="w-full"
+                    style={
+                      "height: " +
+                      (Math.max(...bars.map((bar) => bar.value)) / maxValue) *
+                        100 +
+                      "%;"
+                    }
+                  >
+                    <BarGroup bars={bars} seriesConfig={seriesConfig} />
+                  </div>
+                  <p class="absolute -bottom-8">{label}</p>
+                </div>
+              );
+            })
+        }
+      </div>
     </div>
   </div>
+  <p class="text-sm self-end"><i>Verdier under 3 er anonymisert av hensyn til personvern (GDPR)</i></p>
 </div>
