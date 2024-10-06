@@ -40,6 +40,9 @@ export const SearchBar = () => {
 
     const handleTyping = (e: any) => {
         const searchWord = e.target.value;
+
+        setShowList(searchWord.length > 0)
+
         setShownClasses(
             classes.filter((classs) => {
                 return (
@@ -74,9 +77,6 @@ export const SearchBar = () => {
                     onBlur={(e) => {
                         // Sets timeout to ensure the link is clicked before it disappears
                         setTimeout(() => setShowList(false), 100)
-                    }}
-                    onFocus={(e) => {
-                        setShowList(true);
                     }}
                 />
 
