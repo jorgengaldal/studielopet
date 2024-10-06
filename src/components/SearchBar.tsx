@@ -1,27 +1,27 @@
 import { useEffect, useRef, useState } from "react";
-import { fetchClasses } from "../utils/hkdirApi";
-import type { Class } from "../types";
+import { fetchCourses } from "../utils/hkdirApi";
+import type { Course } from "../types";
 import { getUniqueObjectByPredicate } from "../utils/object";
 import { KeyboardHint } from "./KeyboardHint";
 
 const LIST_LENGTH = 10
 
 export const SearchBar = () => {
-    const [classes, setClasses] = useState<Class[]>([]);
-    const [shownClasses, setShownClasses] = useState<Class[]>([]);
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [shownCourses, setShownCourses] = useState<Course[]>([]);
     const [showList, setShowList] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null)
 
 
     useEffect(() => {
-        fetchClasses().then((classes) => {
-            const allClasses = getUniqueObjectByPredicate(
-                classes,
-                (classs) => classs.classCode
+        fetchCourses().then((courses) => {
+            const allCourses = getUniqueObjectByPredicate(
+                courses,
+                (course) => course.courseCode
             );
 
-            setClasses(allClasses);
-            setShownClasses(allClasses.slice(0, LIST_LENGTH));
+            setCourses(allCourses);
+            setShownCourses(allCourses.slice(0, LIST_LENGTH));
         });
     }, []);
 
@@ -43,11 +43,11 @@ export const SearchBar = () => {
 
         setShowList(searchWord.length > 0)
 
-        setShownClasses(
-            classes.filter((classs) => {
+        setShownCourses(
+            courses.filter((course) => {
                 return (
-                    classs.classCode.toLowerCase().startsWith(searchWord.toLowerCase()) ||
-                    classs.className.toLowerCase().startsWith(searchWord.toLowerCase())
+                    course.courseCode.toLowerCase().startsWith(searchWord.toLowerCase()) ||
+                    course.courseName.toLowerCase().startsWith(searchWord.toLowerCase())
                 );
             })
                 .slice(0, LIST_LENGTH)
@@ -86,16 +86,16 @@ export const SearchBar = () => {
             {showList &&
                 <div className="relative w-full h-0">
                     <div className="w-full absolute z-10 bg-dark flex flex-col divide-y shadow-lg shadow-black p-2 ">
-                        {shownClasses.length ?
+                        {shownCourses.length ?
 
-                            shownClasses.map((object, index) => {
+                            shownCourses.map((object, index) => {
                                 return (
                                     <a
                                         className="block"
                                         key={index}
-                                        href={"/" + object.classCode.slice(0, -2)}
+                                        href={"/" + object.courseCode.slice(0, -2)}
                                     >
-                                        {object.className} ({object.classCode.slice(0, -2)})
+                                        {object.courseName} ({object.courseCode.slice(0, -2)})
                                     </a>
                                 );
                             })

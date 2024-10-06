@@ -5,22 +5,22 @@ import Layout from "../layouts/Layout.astro";
 import BarGraph from "../components/graphs/BarGraph.astro";
 import { allEquals, getUnique } from "../utils/object";
 import { getColorByStudyProgrammeCode } from "../utils/utils";
-import { fetchClasses, fetchGradeEntries, getDataForGraph } from "../utils/hkdirApi";
+import { fetchCourses, fetchGradeEntries, getDataForGraph } from "../utils/hkdirApi";
 
-const allClasses = (await fetchClasses())
+const allCourses = (await fetchCourses())
 
-const {classCode} = Astro.params;
-const page = allClasses.find((classObject) => classObject.classCode.slice(0, -2) === classCode);
+const {courseCode} = Astro.params;
+const page = allCourses.find((courseObject) => courseObject.courseCode.slice(0, -2) === courseCode);
 if (!page) return Astro.redirect("/404");
 
 // Values for specifying graph
 const filtering = {
-  classCode: page.classCode,
+  courseCode: page.courseCode,
   // year: page.year,
 //   semester: page.semester,
 };
 
-const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], filtering.classCode);
+const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], filtering.courseCode);
 
 console.log(gradeEntries)
 const filteredGradeEntries = gradeEntries.filter((entry) => allEquals(entry, filtering))
@@ -39,11 +39,11 @@ if (filteredGradeEntries.length != 0) {
   
 ---
 
-<Layout title={`Studieløpet | ${classCode}`}>
+<Layout title={`Studieløpet | ${courseCode}`}>
   <div class=" p-5 flex flex-col items-center">
     <div class="flex flex-col w-full items-center mb-5">
-      <h2 class="text-3xl">{page.className}</h2>
-      <p class="text-md font-thin">{classCode}</p>
+      <h2 class="text-3xl">{page.courseName}</h2>
+      <p class="text-md font-thin">{courseCode}</p>
       <div class="w-2/3 h-1 rounded-sm bg-indigo-400"></div>
     </div>
     <div class="w-full flex flex-col items-center">

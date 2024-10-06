@@ -1,4 +1,4 @@
-import type { Class, GradeEntry } from "../types";
+import type { Course, GradeEntry } from "../types";
 import { getColorByStudyProgrammeCode } from "./utils";
 
 const API_BASE =
@@ -6,7 +6,7 @@ const API_BASE =
 
 export const fetchGradeEntries = async (
   studyProgrammeCodes?: string[],
-  classCode?: string,
+  courseCode?: string,
   numberOfLastYears?: number
 ): Promise<GradeEntry[]> => {
   return (
@@ -70,7 +70,7 @@ export const fetchGradeEntries = async (
             variabel: "Emnekode",
             selection: {
               filter: "item",
-              values: [classCode ?? "TDT4120-1"],
+              values: [courseCode ?? "TDT4120-1"],
               exclude: [""],
             },
           },
@@ -100,7 +100,7 @@ export const fetchGradeEntries = async (
     semesterCode: entry["Semester"],
     studyProgrammeCode: entry["Studieprogramkode"],
     studyProgrammeName: entry["Studieprogramnavn"],
-    classCode: entry["Emnekode"],
+    courseCode: entry["Emnekode"],
     grade: entry["Karakter"],
     totalCandidates: Number(entry["Antall kandidater totalt"]),
     women: Number(entry["Antall kandidater kvinner"]),
@@ -108,9 +108,9 @@ export const fetchGradeEntries = async (
   }));
 };
 
-export const fetchClasses = async (
+export const fetchCourses = async (
   numberOfLastYears?: number
-): Promise<Class[]> => {
+): Promise<Course[]> => {
   return (
     await fetch(API_BASE, {
       method: "POST",
@@ -163,12 +163,12 @@ export const fetchClasses = async (
       }),
     }).then((response) => response.json())
   ).map((entry: any) => ({
-    classCode: entry["Emnekode"],
-    className: entry["Emnenavn"],
+    courseCode: entry["Emnekode"],
+    courseName: entry["Emnenavn"],
     year: entry["Årstall"],
     semester: entry["Semesternavn"],
   }))
-  .filter((entry: Class) => entry.classCode != "ITX/V04-1");
+  .filter((entry: Course) => entry.courseCode != "ITX/V04-1");
   // TODO: Fix better (with substitusjon of / symbol?)
 };
 

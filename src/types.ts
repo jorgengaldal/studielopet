@@ -3,16 +3,16 @@ export interface GradeEntry {
   semester: string;
   studyProgrammeCode: string;
   studyProgrammeName: string;
-  classCode: string;
+  courseCode: string;
   grade: string;
   totalCandidates: number;
   women: number;
   men: number;
 }
 
-export interface Class {
-    classCode: string;
-    className: string;
+export interface Course {
+    courseCode: string;
+    courseName: string;
     year: string;
     semester: string;
 }
