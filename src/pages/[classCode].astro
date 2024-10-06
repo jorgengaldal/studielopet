@@ -16,13 +16,13 @@ if (!page) return Astro.redirect("/404");
 // Values for specifying graph
 const filtering = {
   classCode: page.classCode,
-  year: page.year,
+  // year: page.year,
 //   semester: page.semester,
 };
 
-const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], filtering.classCode, 2);
+const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], filtering.classCode);
 
-
+console.log(gradeEntries)
 const filteredGradeEntries = gradeEntries.filter((entry) => allEquals(entry, filtering))
 
 let data;

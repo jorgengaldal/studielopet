@@ -32,7 +32,7 @@ export const fetchGradeEntries = async (
           "Emnekode",
           "Karakter",
         ],
-        sortBy: ["Institusjonskode", "Avdelingskode"],
+        sortBy: ["Årstall", "Studieprogramkode"],
         filter: [
           {
             variabel: "Institusjonskode",
@@ -77,8 +77,8 @@ export const fetchGradeEntries = async (
           {
             variabel: "Årstall",
             selection: {
-              filter: "top",
-              values: [String(numberOfLastYears ?? 1)],
+              filter: numberOfLastYears ? "top" : "all",
+              values: [String(numberOfLastYears ?? "*")],
               exclude: [""],
             },
           },
@@ -93,7 +93,8 @@ export const fetchGradeEntries = async (
         return response.json()
       }
     })
-  ).map((entry: any) => ({
+  ).reverse()
+  .map((entry: any) => ({
     year: entry["Årstall"],
     semester: entry["Semesternavn"],
     semesterCode: entry["Semester"],

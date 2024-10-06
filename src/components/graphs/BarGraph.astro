@@ -55,7 +55,9 @@ const Y_AXIS_GUIDELINES_TARGET = 10;
         }
       </div>
       {
-        data.map(({ label, bars }, index) => {
+        data
+        .toSorted((a, b) => a.label.localeCompare(b.label)) // Sorts based on label
+        .map(({ label, bars }, index) => {
           return (
             <div class="relative h-full w-full flex flex-col justify-end items-center">
               <div

@@ -20,7 +20,7 @@ export interface Class {
 export type BarGraphData = 
 {
     data: {
-        label?: string;
+        label: string;
         bars: { value: number; color?: string }[];
     }[];
     seriesConfig?: {
