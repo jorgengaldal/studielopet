@@ -18,7 +18,7 @@ export const fetchGradeEntries = async (
       body: JSON.stringify({
         tabell_id: 308,
         api_versjon: 1,
-        statuslinje: "J",
+        statuslinje: "N",
         begrensning: "10000",
         kodetekst: "J",
         desimal_separator: ".",
@@ -85,7 +85,8 @@ export const fetchGradeEntries = async (
         ],
       }),
     }).then((response) => {
-      if (response.statusText == "No Content") {
+      if (response.status == 204) {
+        // 204 No Content
         return []
       }
       else {
