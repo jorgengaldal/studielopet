@@ -22,6 +22,8 @@ while (maxValueBeforeCorrection % MAX_VALUE_DIVISABILITY_THRESHOLD)
 const maxValue = maxValueBeforeCorrection;
 
 const Y_AXIS_GUIDELINES_TARGET = 10;
+
+const ANONYMIZE_THRESHOLD = 3
 ---
 
 <div class="flex flex-col static w-full h-full">
@@ -75,7 +77,9 @@ const Y_AXIS_GUIDELINES_TARGET = 10;
                     class="w-full"
                     style={
                       "height: " +
-                      (Math.max(...bars.map((bar) => bar.value)) / maxValue) *
+                      ((Math.max(...bars.map((bar) => bar.value)) > ANONYMIZE_THRESHOLD 
+                      ? Math.max(...bars.map((bar) => bar.value)) 
+                      : ANONYMIZE_THRESHOLD) / maxValue) *
                         100 +
                       "%;"
                     }

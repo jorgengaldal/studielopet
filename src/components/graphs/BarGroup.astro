@@ -11,10 +11,12 @@ interface Props {
 }
 const { bars, seriesConfig } = Astro.props;
 
-const maxValue = Math.max(...bars.map((bar) => bar.value));
-
 const DEFAULT_COLOR = "#E21617";
 const ANONYMIZE_THRESHOLD = 3
+
+let maxValue = Math.max(...bars.map((bar) => bar.value));
+maxValue = maxValue < ANONYMIZE_THRESHOLD ? ANONYMIZE_THRESHOLD : maxValue
+
 ---
 
 <div class="h-full w-full flex flex-row justify-end items-center">
