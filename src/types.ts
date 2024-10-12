@@ -13,16 +13,18 @@ export interface GradeEntry {
 export interface Course {
     courseCode: string;
     courseName: string;
-    year: string;
+    year: number;
     semester: string;
 }
 
+export type BarGraphDataData = {
+    label: string;
+    bars: { value: number; color?: string }[];
+}[]
+
 export type BarGraphData = 
 {
-    data: {
-        label: string;
-        bars: { value: number; color?: string }[];
-    }[];
+    data: BarGraphDataData;
     seriesConfig?: {
         label?: string,
         color?: string,

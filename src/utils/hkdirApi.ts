@@ -1,4 +1,4 @@
-import type { Course, GradeEntry } from "../types";
+import type { BarGraphData, BarGraphDataData, Course, GradeEntry } from "../types";
 import { getUnique } from "./object";
 import { getColorByStudyProgrammeCode } from "./utils";
 
@@ -96,7 +96,7 @@ export const fetchGradeEntries = async (
   )
     .reverse()
     .map((entry: any) => ({
-      year: entry["Årstall"],
+      year: Number(entry["Årstall"]),
       semester: entry["Semesternavn"],
       semesterCode: entry["Semester"],
       studyProgrammeCode: entry["Studieprogramkode"],
@@ -167,7 +167,7 @@ export const fetchCourses = async (
     .map((entry: any) => ({
       courseCode: entry["Emnekode"],
       courseName: entry["Emnenavn"],
-      year: entry["Årstall"],
+      year: Number(entry["Årstall"]),
       semester: entry["Semesternavn"],
     }))
     .filter((entry: Course) => entry.courseCode != "ITX/V04-1");
@@ -192,7 +192,7 @@ function getGradeLabel(grade: string) {
   }
 }
 
-export function getDataForGraph(entries: GradeEntry[]) {
+export function getDataForGraph(entries: GradeEntry[]): BarGraphDataData {
   const data: GraphDataIntermediate = {};
 
   entries.forEach((entry) => {

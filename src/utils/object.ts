@@ -9,8 +9,24 @@ export function allEquals(object: Object, filter: Object) {
   );
 }
 
-export function getUnique<Type>(array: Type[], mapFunction: (a: Type) => any) {
-  return new Array(...new Set(array.map((ob) => mapFunction(ob))));
+export function getUnique<Type, MappedType>(array: Type[], 
+  mapFunction: (a: Type) => MappedType, 
+equalityCheck?: (a: MappedType, b: MappedType) => boolean) {
+  // Default equalityCheck
+  if (!equalityCheck) {
+    equalityCheck = (a, b) => a === b
+  }
+
+  const result: MappedType[] = []
+
+  for (const element of array) {
+    const mappedElement = mapFunction(element)
+    if (!result.some((elem) => equalityCheck(elem, mappedElement))) {
+      result.push(mappedElement)
+    }
+  }
+  
+  return result
 }
 
 export function getUniqueObjectByPredicate<Type>(array: Type[], mapFunction: (a: Type) => string) {

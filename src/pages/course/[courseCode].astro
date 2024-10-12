@@ -6,6 +6,9 @@ import BarGraph from "../../components/graphs/BarGraph.astro";
 import { allEquals, getUnique } from "../../utils/object";
 import { getColorByStudyProgrammeCode } from "../../utils/utils";
 import { fetchCourses, fetchGradeEntries, getDataForGraph } from "../../utils/hkdirApi";
+import ParameterSelect from "../../components/ParameterSelect.astro";
+import { hasEqualElements } from "../../utils/lists";
+import type { BarGraphDataData } from "../../types";
 
 const allCourses = (await fetchCourses())
 
@@ -22,45 +25,86 @@ const filtering = {
 
 const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], filtering.courseCode);
 
-console.log(gradeEntries)
-const filteredGradeEntries = gradeEntries.filter((entry) => allEquals(entry, filtering))
-
-let data;
-let semester: string;
-let year: number;
-
-if (filteredGradeEntries.length != 0) {
-  semester = filteredGradeEntries[0].semester
-  year = filteredGradeEntries[0].year
-  data = getDataForGraph(filteredGradeEntries.filter((entry) => {
-    return entry.year == year && entry.semester == semester
-  }));
-}
+const semesters = getUnique(gradeEntries, (entry) => [entry.year, entry.semester], hasEqualElements).toSorted((a, b) => {
+  const semesterOrder = ["Vår", "Sommer", "Høst"]
   
+  if (a[0] != b[0]) return (b[0] as number) - (a[0] as number)
+  return semesterOrder.indexOf(b[1] as string) - semesterOrder.indexOf(a[1] as string)
+})
+
 ---
 
 <Layout title={`Studieløpet | ${courseCode}`}>
-  <div class="flex flex-col items-center w-full">
-    <div class="flex flex-col w-full items-center mb-5">
+  <div class="flex flex-col items-center w-full gap-5">
+    <div class="flex flex-col w-full items-center">
       <h2 class="text-3xl">{page.courseName}</h2>
       <p class="text-md font-thin">{courseCode}</p>
       <div class="w-2/3 h-1 rounded-sm bg-indigo-400"></div>
     </div>
-    <div class="w-full flex flex-col items-center">
-      {data ? 
-        <h3 class="text-md font-bold mb-2">{semester!} {year!}</h3>
-        <BarGraph
-        data={data}
-        seriesConfig={getUnique(
-          gradeEntries,
-          (entry) => entry.studyProgrammeCode
-        ).map((code) => ({
-            label: code,
-            color: getColorByStudyProgrammeCode(code),
-          }))}
-        /> :
-        <p><i>Ingen data for de spesifiserte parametrene.</i></p>
-      }
+
+    <div class="w-full h-fit flex flex-row items-center gap-5"> 
+      
+      {semesters.map(([year, semester]) => {
+        let graphData;
+        const filteredGradeEntries = gradeEntries.filter((entry) => {
+            return entry.year == year && entry.semester == semester
+          })
+        if (filteredGradeEntries.length != 0) {
+          graphData = getDataForGraph(filteredGradeEntries);
+        }
+        return <div class="w-full bargraph-container" id={`bargraph-${year}-${semester}`}>
+        <h3 class="text-md font-bold mb-2"><span id="semesterTitle">{semester!}</span> <span id="yearTitle">{year!}</span></h3>
+          {graphData ?
+              <BarGraph
+              data={graphData}
+              seriesConfig={getUnique(
+                filteredGradeEntries, 
+                (entry) => entry.studyProgrammeCode
+              ).map((code) => ({
+                label: code,
+                color: getColorByStudyProgrammeCode(code),
+              }))}
+              />
+            : <p><i>Ingen data for de spesifiserte parametrene.</i></p>
+              }
+            </div>
+            }
+          )}
+
+      <input type="range"
+      id="yearRange"
+      min={0}
+      max={semesters.length - 1}
+      step="1"
+      value={0}
+      class="h-full">
     </div>
   </div>
 </Layout>
+
+<style>
+    input[type="range"] {
+        writing-mode: vertical-lr;
+        direction: ltr;
+    }
+</style>
+
+<script define:vars={{semesters}}>
+  for (element of [...document.getElementsByClassName("bargraph-container")].slice(1)) {
+    console.log(element)        
+    element.style.display = "none"
+  }
+
+  const yearTitle = document.getElementById("yearTitle")
+  const semesterTitle = document.getElementById("semesterTitle")
+  document.getElementById("yearRange")?.addEventListener("input", (e) => {
+        if (!yearTitle || !semesterTitle) return
+        const activeBarGraph = document.getElementById(`bargraph-${semesters[e.target.value][0]}-${semesters[e.target.value][1]}`)
+        for (element of document.getElementsByClassName("bargraph-container")) {
+          element.style.display = "none"
+        }
+        activeBarGraph.style.display = "flex"
+        activeBarGraph.style.flexDirection = "column"
+
+    })
+</script>
