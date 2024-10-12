@@ -181,6 +181,17 @@ export interface GraphDataIntermediate {
   }[];
 }
 
+function getGradeLabel(grade: string) {
+  switch (grade) {
+    case "G":
+      return "Godkjent"
+    case "H":
+      return "Ikke godkjent"
+    default:
+      return grade
+  }
+}
+
 export function getDataForGraph(entries: GradeEntry[]) {
   const data: GraphDataIntermediate = {};
 
@@ -203,7 +214,7 @@ export function getDataForGraph(entries: GradeEntry[]) {
   ];
 
   return Object.entries(data).map(([grade, bars]) => ({
-    label: grade,
+    label: getGradeLabel(grade),
     bars: bars
       .toSorted(
         (a, b) =>
