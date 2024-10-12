@@ -209,3 +209,60 @@ export function getDataForGraph(entries: GradeEntry[]) {
       })),
   }));
 }
+
+/**
+ * Checks which grade scale some array of grade entries 
+ * belongs to, as the grade entries might not contain all 
+ * grades of the scale. Fallbacks to the scale actually used,
+ * if its not one of the predefined scales.
+ * 
+ * @param entries 
+ * @returns One of the predefined scales, fallbacks to the 
+ *  list of unique grades from *entries*
+ */
+export function getGradeScale(entries: GradeEntry[]): string[] {
+  let result: string[] = []
+  const possibleScales = [
+    ["A", "B", "C", "D", "E", "F"],
+    ["G", "H"]
+  ]
+
+  for (const entry of entries) {
+    if (!result.includes(entry.grade)) {
+      result.push(entry.grade)
+    }
+  }
+
+  // For each scale, check if matching
+  for (const scale of possibleScales) {
+    if (scale.length < result.length) continue
+    let correctScale = true
+    for (const grade of result) {
+      if (!scale.includes(grade)) {
+        correctScale = false
+        break
+      }
+    }
+
+    // Found correct scale
+    if (correctScale) {
+      result = scale
+      break
+    }
+  }
+
+  return result
+}
+
+/**
+ * Corrects the data for use in graph by the following corrections:
+ * - [TODO] Make sure every grade has values for each study programme
+ * - [TODO] Make sure every study programme has values for each grade
+ * 
+ * @param entries Entries for one graph
+ */
+function dataIntegrityCorrection(entries: GradeEntry[]) {
+  const scale = getGradeScale(entries)
+  // entries[0].
+}
+
