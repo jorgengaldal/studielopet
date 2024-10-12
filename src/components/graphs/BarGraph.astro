@@ -24,11 +24,11 @@ const maxValue = maxValueBeforeCorrection;
 const Y_AXIS_GUIDELINES_TARGET = 10;
 ---
 
-<div class="flex flex-col static w-full">
+<div class="flex flex-col static w-full h-full">
   <div
-    class="flex flex-row justify-around gap-1 h-full w-full bg-white aspect-video text-black p-5 pb-10"
+    class="flex flex-row justify-around gap-1 bg-white w-full aspect-video text-black pt-5 px-8 pb-10"
   >
-    <div class="flex flex-col gap-5">
+    <div class="flex flex-col gap-5 h-full w-full">
       <div class="flex flex-row gap-3 justify-end">
         {
           seriesConfig?.map(({ label, color }) => {
@@ -44,10 +44,10 @@ const Y_AXIS_GUIDELINES_TARGET = 10;
         }
       </div>
       <div
-        class="relative flex flex-row justify-around gap-6 h-full w-full border-l-2 border-b-2 border-black bg-white aspect-video text-black px-5 ml-5"
+        class="relative flex flex-row justify-around gap-6 w-auto h-full border-l-2 border-b-2 border-black bg-white aspect-video text-black px-5 ml-8 my-2"
       >
         <div
-          class="absolute flex flex-col justify-between h-[104%] self-center -left-6"
+          class="absolute flex flex-col justify-between h-[104%] self-center -left-8"
         >
           {
             wholeNumberRange(maxValue, Y_AXIS_GUIDELINES_TARGET)

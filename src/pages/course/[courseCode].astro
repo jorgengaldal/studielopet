@@ -47,20 +47,20 @@ if (filteredGradeEntries.length != 0) {
       <div class="w-2/3 h-1 rounded-sm bg-indigo-400"></div>
     </div>
     <div class="w-full flex flex-col items-center">
-
       {data ? 
-      <h3 class="text-md font-bold mb-2">{semester!} {year!}</h3>
-    <BarGraph
-    data={data}
-    seriesConfig={getUnique(
-      gradeEntries,
-      (entry) => entry.studyProgrammeCode
-    ).map((code) => ({
-        label: code,
-        color: getColorByStudyProgrammeCode(code),
-      }))}
-    /> :
-    <p><i>Ingen data for de spesifiserte parametrene.</i></p>}
+        <h3 class="text-md font-bold mb-2">{semester!} {year!}</h3>
+        <BarGraph
+        data={data}
+        seriesConfig={getUnique(
+          gradeEntries,
+          (entry) => entry.studyProgrammeCode
+        ).map((code) => ({
+            label: code,
+            color: getColorByStudyProgrammeCode(code),
+          }))}
+        /> :
+        <p><i>Ingen data for de spesifiserte parametrene.</i></p>
+      }
     </div>
   </div>
 </Layout>
