@@ -1,4 +1,5 @@
 import type { Course, GradeEntry } from "../types";
+import { getUnique } from "./object";
 import { getColorByStudyProgrammeCode } from "./utils";
 
 const API_BASE =
@@ -87,25 +88,25 @@ export const fetchGradeEntries = async (
     }).then((response) => {
       if (response.status == 204) {
         // 204 No Content
-        return []
-      }
-      else {
-        return response.json()
+        return [];
+      } else {
+        return response.json();
       }
     })
-  ).reverse()
-  .map((entry: any) => ({
-    year: entry["Årstall"],
-    semester: entry["Semesternavn"],
-    semesterCode: entry["Semester"],
-    studyProgrammeCode: entry["Studieprogramkode"],
-    studyProgrammeName: entry["Studieprogramnavn"],
-    courseCode: entry["Emnekode"],
-    grade: entry["Karakter"],
-    totalCandidates: Number(entry["Antall kandidater totalt"]),
-    women: Number(entry["Antall kandidater kvinner"]),
-    men: Number(entry["Antall kandidater menn"]),
-  }));
+  )
+    .reverse()
+    .map((entry: any) => ({
+      year: entry["Årstall"],
+      semester: entry["Semesternavn"],
+      semesterCode: entry["Semester"],
+      studyProgrammeCode: entry["Studieprogramkode"],
+      studyProgrammeName: entry["Studieprogramnavn"],
+      courseCode: entry["Emnekode"],
+      grade: entry["Karakter"],
+      totalCandidates: Number(entry["Antall kandidater totalt"]),
+      women: Number(entry["Antall kandidater kvinner"]),
+      men: Number(entry["Antall kandidater menn"]),
+    }));
 };
 
 export const fetchCourses = async (
@@ -131,7 +132,7 @@ export const fetchCourses = async (
           "Semester",
           "Emnekode",
           "Emnenavn",
-          "Status"
+          "Status",
         ],
         sortBy: ["Institusjonskode", "Avdelingskode"],
         filter: [
@@ -162,23 +163,26 @@ export const fetchCourses = async (
         ],
       }),
     }).then((response) => response.json())
-  ).map((entry: any) => ({
-    courseCode: entry["Emnekode"],
-    courseName: entry["Emnenavn"],
-    year: entry["Årstall"],
-    semester: entry["Semesternavn"],
-  }))
-  .filter((entry: Course) => entry.courseCode != "ITX/V04-1");
+  )
+    .map((entry: any) => ({
+      courseCode: entry["Emnekode"],
+      courseName: entry["Emnenavn"],
+      year: entry["Årstall"],
+      semester: entry["Semesternavn"],
+    }))
+    .filter((entry: Course) => entry.courseCode != "ITX/V04-1");
   // TODO: Fix better (with substitusjon of / symbol?)
 };
 
+export interface GraphDataIntermediate {
+  [grade: string]: {
+    studyProgrammeCode: string;
+    value: number;
+  }[];
+}
+
 export function getDataForGraph(entries: GradeEntry[]) {
-  const data: {
-    [grade: string]: {
-      studyProgrammeCode: string;
-      value: number;
-    }[];
-  } = {};
+  const data: GraphDataIntermediate = {};
 
   entries.forEach((entry) => {
     if (!data[entry.grade]) {
@@ -190,6 +194,9 @@ export function getDataForGraph(entries: GradeEntry[]) {
       value: entry.totalCandidates,
     });
   });
+
+  // Corrects data
+  dataIntegrityCorrection(data);
 
   const barOrdering = [
     ...data[entries[0].grade].map((element) => element.studyProgrammeCode),
@@ -211,58 +218,89 @@ export function getDataForGraph(entries: GradeEntry[]) {
 }
 
 /**
- * Checks which grade scale some array of grade entries 
- * belongs to, as the grade entries might not contain all 
+ * Checks which grade scale some array of grade entries
+ * belongs to, as the grade entries might not contain all
  * grades of the scale. Fallbacks to the scale actually used,
  * if its not one of the predefined scales.
- * 
- * @param entries 
- * @returns One of the predefined scales, fallbacks to the 
+ *
+ * @param data
+ * @returns One of the predefined scales, fallbacks to the
  *  list of unique grades from *entries*
  */
-export function getGradeScale(entries: GradeEntry[]): string[] {
-  let result: string[] = []
+export function getGradeScale(data: GraphDataIntermediate): string[] {
+  let result: string[] = [];
   const possibleScales = [
     ["A", "B", "C", "D", "E", "F"],
-    ["G", "H"]
-  ]
+    ["G", "H"],
+  ];
 
-  for (const entry of entries) {
-    if (!result.includes(entry.grade)) {
-      result.push(entry.grade)
+  for (const grade of Object.keys(data)) {
+    if (!result.includes(grade)) {
+      result.push(grade);
     }
   }
 
   // For each scale, check if matching
   for (const scale of possibleScales) {
-    if (scale.length < result.length) continue
-    let correctScale = true
+    if (scale.length < result.length) continue;
+    let correctScale = true;
     for (const grade of result) {
       if (!scale.includes(grade)) {
-        correctScale = false
-        break
+        correctScale = false;
+        break;
       }
     }
 
     // Found correct scale
     if (correctScale) {
-      result = scale
-      break
+      result = scale;
+      break;
     }
   }
 
-  return result
+  return result;
 }
+
+export function getStudyProgrammes(data: GraphDataIntermediate): string[] {
+  const result: string[] = []
+
+  for (const groupData of Object.values(data)) {
+    for (const barData of groupData) {
+      if (!result.includes(barData.studyProgrammeCode)) {
+        result.push(barData.studyProgrammeCode)
+      }
+    }
+  }
+
+  return result;
+}
+
 
 /**
  * Corrects the data for use in graph by the following corrections:
- * - [TODO] Make sure every grade has values for each study programme
- * - [TODO] Make sure every study programme has values for each grade
- * 
+ * - Make sure the graph contains all the grades of the scale
+ * - Make sure every grade has values for each study programme
+ *
  * @param entries Entries for one graph
  */
-function dataIntegrityCorrection(entries: GradeEntry[]) {
-  const scale = getGradeScale(entries)
-  // entries[0].
-}
+function dataIntegrityCorrection(data: GraphDataIntermediate) {
+  // Make sure the graph contains all the grades of the scale
+  for (const grade of getGradeScale(data)) {
+    if (!Object.hasOwn(data, grade)) {
+      data[grade] = [];
+    }
+  }
 
+  // Make sure every grade has values for each study programme
+  const studyProgrammes = getStudyProgrammes(data)
+  for (const groupData of Object.values(data)) {
+    for (const studyProgramme of studyProgrammes) {
+      if (!groupData.some((barData) => barData.studyProgrammeCode == studyProgramme)) {
+        groupData.push({
+          studyProgrammeCode: studyProgramme,
+          value: 0
+        })
+      }
+    }
+  }
+}
