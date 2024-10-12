@@ -1,3 +1,5 @@
+import {test, expect} from "@jest/globals"
+
 import type { GradeEntry } from "../../src/types";
 import { getGradeScale } from "../../src/utils/hkdirApi";
 
