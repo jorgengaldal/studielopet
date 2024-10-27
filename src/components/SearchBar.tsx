@@ -1,27 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchCourses } from "../utils/hkdirApi";
-import type { Course } from "../types";
-import { getUniqueObjectByPredicate } from "../utils/object";
+import type { Course, MinimalCourse } from "../types";
+import { getUnique, getUniqueObjectByPredicate } from "../utils/object";
 import { KeyboardHint } from "./KeyboardHint";
 
 const LIST_LENGTH = 10
 
 export const SearchBar = () => {
-    const [courses, setCourses] = useState<Course[]>([]);
-    const [shownCourses, setShownCourses] = useState<Course[]>([]);
+    const [courses, setCourses] = useState<MinimalCourse[]>([]);
+    const [shownCourses, setShownCourses] = useState<MinimalCourse[]>([]);
     const [showList, setShowList] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null)
 
 
     useEffect(() => {
         fetchCourses().then((courses) => {
-            const allCourses = getUniqueObjectByPredicate(
-                courses,
-                (course) => course.courseCode
-            );
-
-            setCourses(allCourses);
-            setShownCourses(allCourses.slice(0, LIST_LENGTH));
+            console.log(courses)
+            setCourses(courses);
+            setShownCourses(courses.slice(0, LIST_LENGTH));
         });
     }, []);
 

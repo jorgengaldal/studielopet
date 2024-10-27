@@ -6,11 +6,14 @@ import BarGraph from "../../components/graphs/BarGraph.astro";
 import { allEquals, getUnique } from "../../utils/object";
 import { getColorByStudyProgrammeCode } from "../../utils/utils";
 import { fetchCourses, fetchGradeEntries, getDataForGraph } from "../../utils/hkdirApi";
+import ParameterSelect from "../../components/ParameterSelect.astro";
 
 const allCourses = (await fetchCourses())
 
 const {courseCode} = Astro.params;
 const page = allCourses.find((courseObject) => courseObject.courseCode.slice(0, -2) === courseCode);
+console.log(page)
+
 if (!page) return Astro.redirect("/404");
 
 // Values for specifying graph
@@ -20,9 +23,8 @@ const filtering = {
 //   semester: page.semester,
 };
 
-const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], filtering.courseCode);
+const gradeEntries = await fetchGradeEntries(undefined, filtering.courseCode);
 
-console.log(gradeEntries)
 const filteredGradeEntries = gradeEntries.filter((entry) => allEquals(entry, filtering))
 
 let data;
@@ -46,6 +48,9 @@ if (filteredGradeEntries.length != 0) {
       <p class="text-md font-thin">{courseCode}</p>
       <div class="w-2/3 h-1 rounded-sm bg-indigo-400"></div>
     </div>
+
+    <ParameterSelect/>
+
     <div class="w-full flex flex-col items-center">
       {data ? 
         <h3 class="text-md font-bold mb-2">{semester!} {year!}</h3>
