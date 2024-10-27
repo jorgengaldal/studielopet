@@ -1,16 +1,19 @@
 ---
-import BaseLayout from './BaseLayout.astro';
-import Footer from './Footer.astro';
-import Navbar from './Navbar.astro';
+import BaseLayout from "./BaseLayout.astro";
+import Footer from "./Footer.astro";
+import Navbar from "./Navbar.astro";
 
 interface Props {
-	subtitle: string;
+  subtitle?: string;
+  title?: string;
 }
 
-const { subtitle } = Astro.props;
+const { subtitle, title } = Astro.props;
 ---
 
-<BaseLayout title={`Studieløpet | ${subtitle}`}>
+<BaseLayout
+  title={(title ?? subtitle) ? `Studieløpet | ${subtitle}` : "Studieløpet"}
+>
   <Navbar />
   <main class="flex flex-col justify-start items-center mb-auto mt-0">
     <slot />
