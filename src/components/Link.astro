@@ -3,13 +3,16 @@ interface Props {
   to: string;
   newWindow?: boolean;
   noIcon?: boolean;
+  subtle?: boolean;
 }
 
-const { to, newWindow, noIcon } = Astro.props;
+const { to, newWindow, noIcon, subtle } = Astro.props;
+
+const colorStyling = subtle ? "hover:brightness-75 active:brightness-50" : "text-blue-500 hover:text-blue-300 active:text-blue-700"
 ---
 
 <a
-  class="inline-flex items-center gap-1 text-blue-500 hover:text-blue-300 active:text-blue-700"
+  class={`inline-flex items-center gap-1 ${colorStyling}`}
   href={to}
   target={newWindow ? "_blank" : "_self"}
 >
