@@ -20,6 +20,9 @@ const filtering = {
 //   semester: page.semester,
 };
 
+// Course code without version number
+const presentableCourseCode = page.courseCode.slice(0, -2)
+
 const gradeEntries = await fetchGradeEntries(["BIT", "MTDT"], filtering.courseCode);
 
 console.log(gradeEntries)
@@ -39,11 +42,11 @@ if (filteredGradeEntries.length != 0) {
   
 ---
 
-<Layout title={`Studieløpet | ${courseCode}`}>
+<Layout subtitle={presentableCourseCode}>
   <div class="flex flex-col items-center w-full">
     <div class="flex flex-col w-full items-center mb-5">
       <h2 class="text-3xl">{page.courseName}</h2>
-      <p class="text-md font-thin">{courseCode}</p>
+      <p class="text-md font-thin">{presentableCourseCode}</p>
       <div class="w-2/3 h-1 rounded-sm bg-indigo-400"></div>
     </div>
     <div class="w-full flex flex-col items-center">
