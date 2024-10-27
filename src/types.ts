@@ -28,3 +28,8 @@ export type BarGraphData =
         color?: string,
     }[]
 }
+
+export interface MinimalCourse {
+    courseCode: string;
+    courseName: string;
+}

@@ -1,4 +1,4 @@
-import type { Course, GradeEntry } from "../types";
+import type { Course, GradeEntry, MinimalCourse } from "../types";
 import { getUnique } from "./object";
 import { getColorByStudyProgrammeCode } from "./utils";
 
@@ -111,8 +111,8 @@ export const fetchGradeEntries = async (
 
 export const fetchCourses = async (
   numberOfLastYears?: number
-): Promise<Course[]> => {
-  return (
+): Promise<MinimalCourse[]> => {
+  return getUnique((
     await fetch(API_BASE, {
       method: "POST",
       headers: {
@@ -164,14 +164,22 @@ export const fetchCourses = async (
       }),
     }).then((response) => response.json())
   )
-    .map((entry: any) => ({
+    .map((entry: any): Course => ({
       courseCode: entry["Emnekode"],
       courseName: entry["Emnenavn"],
       year: entry["Årstall"],
       semester: entry["Semesternavn"],
     }))
-    .filter((entry: Course) => entry.courseCode != "ITX/V04-1");
+    // .filter((entry: Course, index: number, array: Course[]) => !array.includes(entry))
+    .filter((entry: Course) => entry.courseCode != "ITX/V04-1")
   // TODO: Fix better (with substitusjon of / symbol?)
+    .toSorted((a: Course, b: Course) => Number(b.year) - Number(a.year)),
+      (course: Course) => ({
+          courseCode: course.courseCode,
+          courseName: course.courseName
+      }),
+      (a, b) => a.courseCode == b.courseCode
+  )
 };
 
 export interface GraphDataIntermediate {
