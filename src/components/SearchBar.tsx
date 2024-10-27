@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import type { Course } from "../types";
 import { fetchCourses } from "../utils/hkdirApi";
+import { constrainNumber } from "../utils/number";
 import { getUniqueObjectByPredicate } from "../utils/object";
 import { KeyboardHint } from "./KeyboardHint";
-import { constrainNumber } from "../utils/number";
-import { type Course } from "../types";
 
 function getSanitizedCourseName(course: Course) {
   return course.courseCode.slice(0, -2);
