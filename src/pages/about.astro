@@ -1,0 +1,34 @@
+---
+import Link from "../components/Link.astro";
+import StyledStudielopet from "../components/StyledStudielopet.astro";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout subtitle="Om studieløpet">
+  <article class="w-full flex flex-col items-center gap-5 text-center text-base">
+    <div class="flex flex-col w-full items-center">
+      <h2 class="text-3xl font-semibold">Om <StyledStudielopet></h2>
+      <div class="w-1/3 h-1 rounded-sm bg-indigo-400"></div>
+    </div>
+    <p>
+      <StyledStudielopet /> er (enda) en nettside for å sammenligne karakterer i ulike fag
+      ved NTNU. Det som skiller <StyledStudielopet /> fra andre sider er at man her også
+      kan sammenligne hvordan ulike studieretninger har gjort det i hvert fag.
+    </p>
+    <p>
+      Karakterdataen hentes fra API-et til
+      <i
+        ><Link to="https://dbh.hkdir.no/" newWindow>Database for statistikk om høyere utdanning (DBH)</Link></i
+      >, som leveres av <i
+        >Direktoratet for høyere utdanning og kompetanse (HK-dir)</i
+      >. Dataen som leveres er beskyttet av personvern. Det innebærer at man man ikke vil kunne se resultater
+      hvor antall studenter er mindre enn tre. I grafene på siden representeres dette ved et skravert område på grafen.
+      Dette er en begrensing i dataen som leveres og ikke noe <StyledStudielopet /> selv filtrerer vekk. 
+
+    </p>
+    <p>
+        Om du oppdager en feil eller har forslag til hvordan siden kan forbedres,
+        kan du lage et issue på GitHub ved å følge <Link to="https://github.com/jorgengaldal/studielopet/issues/new" newWindow>denne lenken</Link> eller sende en epost til <Link to="mailto:jorgen.4+studielopet@live.no" newWindow>jorgen.4@live.no</Link>.
+    </p>
+  </article>
+</Layout>

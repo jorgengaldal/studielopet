@@ -1,21 +1,28 @@
 ---
 import GithubIcon from "../components/icons/GithubIcon.astro";
+import InfoCircle from "../components/icons/InfoCircle.astro";
 import Link from "../components/Link.astro";
 ---
-<footer class="bg-indigo-900 text-base self-end h-fit w-full flex flex-row gap-5 items-end justify-between p-12">
-    <div>
-        <i class="text-sm text-slate-300">
-            Laget av
-        </i>
-        <p class="text-base">
-            Jørgen Galdal | 
-            <Link to="mailto:jorgen.4@live.no" subtle>
-                jorgen.4@live.no
-            </Link>
-            | Ikkeno' forlag
-        </p>
+<footer class="bg-indigo-900 text-base flex flex-col items-center self-end h-fit w-full p-12">
+    <div class="flex flex-row gap-5 items-end justify-between w-full">
+        <div class="basis-0 grow flex flex-col justify-end">
+            <i class="text-sm text-slate-300">
+                Laget av
+            </i>
+            <p class="text-base">
+                Jørgen Galdal | 
+                <Link to="mailto:jorgen.4@live.no" subtle>
+                    jorgen.4@live.no
+                </Link>
+                | Ikkeno' forlag
+            </p>
+        </div>
+        <Link to="/about" subtle class="basis-0 grow flex flex-row justify-center items-center gap-2">
+            <InfoCircle />
+            Om siden
+        </Link>
+        <Link class="basis-0 grow flex justify-end" to={"https://www.github.com/jorgengaldal/studielopet"} newWindow subtle noIcon>
+            <GithubIcon class="size-6 fill-white"/>/jorgengaldal/studielopet
+        </Link>
     </div>
-    <Link to={"https://www.github.com/jorgengaldal/studielopet"} newWindow subtle noIcon>
-        <GithubIcon class="size-6 fill-white"/>/jorgengaldal/studielopet
-    </Link>
 </footer>

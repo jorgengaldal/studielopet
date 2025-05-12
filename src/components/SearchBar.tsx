@@ -6,7 +6,11 @@ import { KeyboardHint } from "./KeyboardHint";
 
 const LIST_LENGTH = 10
 
-export const SearchBar = () => {
+interface Props {
+    className?: string;
+}
+
+export const SearchBar = ({ className }: Props) => {
     const [courses, setCourses] = useState<Course[]>([]);
     const [shownCourses, setShownCourses] = useState<Course[]>([]);
     const [showList, setShowList] = useState(false);
@@ -55,7 +59,7 @@ export const SearchBar = () => {
     };
 
     return (
-        <div style={{ viewTransitionName: "searchbar" }} className="flex flex-col justify-center divide-y gap-1 divide-accent">
+        <div style={{ viewTransitionName: "searchbar" }} className={"flex flex-col justify-center divide-y gap-1 divide-accent " + (className ?? "")}>
 
             <div className="relative w-full">
                 <div className="absolute inset-y-3 px-2">
@@ -83,7 +87,8 @@ export const SearchBar = () => {
 
             </div>
 
-            {showList &&
+            {
+                showList &&
                 <div className="relative w-full h-0">
                     <div className="w-full absolute z-10 bg-dark flex flex-col divide-y shadow-lg shadow-black p-2 ">
                         {shownCourses.length ?
@@ -101,7 +106,8 @@ export const SearchBar = () => {
                             })
                             : <p><i>Ingen fag stemmer med søket</i></p>}
                     </div>
-                </div>}
-        </div>
+                </div>
+            }
+        </div >
     );
 };
