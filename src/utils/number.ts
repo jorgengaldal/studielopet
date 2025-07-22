@@ -15,7 +15,14 @@ export const closestDivisor = (number: number, target: number) => {
 
 export const wholeNumberRange = (stop: number, divisions: number) => {
   const closest = closestDivisor(stop, divisions);
+  // TODO: Fix type error
   return [...Array(closest + 1).keys()].map((num) =>
     Math.floor((stop * num) / closest)
   );
 };
+
+export function constrainNumber(number: number, low: number, high: number) {
+  if (number < low) return low;
+  if (number > high) return high;
+  return number;
+}

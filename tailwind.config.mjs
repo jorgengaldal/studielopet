@@ -6,6 +6,7 @@ export default {
 			colors: {
 				dark: "#333",
 				accent: "#883aea",
+				accentMuted: "#b882f9",
 				subtle: "#888",
 			}
 		},
