@@ -15,7 +15,9 @@ const { subtitle, title } = Astro.props;
   title={(title ?? subtitle) ? `Studieløpet | ${subtitle}` : "Studieløpet"}
 >
   <Navbar />
-  <main class="flex flex-col justify-start items-center mb-auto mt-0">
+  <main
+    class="flex flex-col justify-start min-h-screen items-center mb-auto mt-0"
+  >
     <slot />
   </main>
   <Footer />
